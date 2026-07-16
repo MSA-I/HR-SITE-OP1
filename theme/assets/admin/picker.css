@@ -1,0 +1,147 @@
+.hrd-picker {
+	display: grid;
+	grid-template-columns: 1fr 380px;
+	gap: 20px;
+	align-items: start;
+}
+
+@media (max-width: 1100px) {
+	.hrd-picker {
+		grid-template-columns: 1fr;
+	}
+}
+
+.hrd-picker__stage {
+	position: relative;
+	/* Coordinates are physical positions in an image, so the stage is LTR even in an
+	   RTL admin. Get this wrong and every pin mirrors onto the wrong object. */
+	direction: ltr;
+	background: #f0f0f1;
+	cursor: crosshair;
+	user-select: none;
+}
+
+.hrd-picker__stage img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.hrd-pin {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	width: 26px;
+	height: 26px;
+	border-radius: 999px;
+	border: 2px solid #fff;
+	background: #5e6b3e;
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	cursor: grab;
+	box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+	padding: 0;
+}
+
+.hrd-pin:active {
+	cursor: grabbing;
+}
+
+.hrd-picker__list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.hrd-row {
+	display: grid;
+	grid-template-columns: 24px 1fr 70px auto;
+	gap: 8px;
+	align-items: start;
+	padding: 8px;
+	border: 1px solid #dcdcde;
+	background: #fff;
+}
+
+.hrd-row__num {
+	display: grid;
+	place-items: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 999px;
+	background: #5e6b3e;
+	color: #fff;
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.hrd-row__main {
+	position: relative;
+	min-width: 0;
+}
+
+.hrd-row__search {
+	width: 100%;
+}
+
+.hrd-row__empty {
+	color: #b32d2e;
+	font-size: 12px;
+}
+
+.hrd-row__results {
+	position: absolute;
+	inset-inline: 0;
+	top: 100%;
+	z-index: 10;
+	max-height: 260px;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.hrd-result {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 6px 8px;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	text-align: start;
+}
+
+.hrd-result:hover {
+	background: #f0f0f1;
+}
+
+.hrd-result img,
+.hrd-result__noimg {
+	width: 32px;
+	height: 32px;
+	object-fit: cover;
+	background: #f0f0f1;
+	flex: none;
+}
+
+.hrd-result span {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.hrd-result small {
+	color: #646970;
+	white-space: nowrap;
+}
+
+.hrd-notice {
+	padding: 12px;
+	background: #fcf9e8;
+	border-inline-start: 4px solid #dba617;
+}

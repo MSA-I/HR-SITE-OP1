@@ -1,0 +1,540 @@
+/* ---- 01 Hero ------------------------------------------------------------- */
+
+.hero {
+	position: relative;
+	/* dvh, not vh: on iOS the URL bar makes vh lie. */
+	block-size: 100dvh;
+	min-block-size: 560px;
+	display: grid;
+	align-items: end;
+	overflow: hidden;
+	background: var(--ink-900);
+}
+
+.hero__media {
+	position: absolute;
+	inset: 0;
+}
+
+.hero__img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+/*
+ * The headline must survive an unknown photograph, and HR Design's are bright: cream
+ * type over a sunlit travertine floor vanished completely at the first attempt. The
+ * scrim is deliberately heavy at the base — that is where the type lives — and clears
+ * entirely by two thirds up so the image still reads as the image.
+ */
+.hero__media::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to top,
+		rgb(25 21 18 / 0.88) 0%,
+		rgb(25 21 18 / 0.55) 22%,
+		rgb(25 21 18 / 0.18) 45%,
+		transparent 66%
+	);
+}
+
+.hero__inner {
+	position: relative;
+	max-inline-size: var(--max-width);
+	inline-size: 100%;
+	margin-inline: auto;
+	padding: 0 var(--page-margin) var(--s9);
+	color: var(--cream-050);
+}
+
+.hero__title {
+	/* The one element allowed to hang out past the content column. */
+	margin-inline-end: calc(var(--page-margin) * -0.5);
+	max-inline-size: 14ch;
+	text-shadow: 0 1px 24px rgb(25 21 18 / 0.4);
+}
+
+.hero__actions {
+	display: flex;
+	gap: var(--s3);
+	flex-wrap: wrap;
+	margin-block-start: var(--s6);
+}
+
+.hero__actions .btn {
+	background: var(--cream-050);
+	color: var(--ink-900);
+	border-color: var(--cream-050);
+}
+
+.hero__actions .btn--primary {
+	background: transparent;
+	color: var(--cream-050);
+	border-color: var(--cream-050);
+}
+
+/* ---- Section heads ------------------------------------------------------- */
+
+.section__head {
+	margin-block-end: var(--s7);
+}
+
+.section__head--tabs {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s5);
+	flex-wrap: wrap;
+}
+
+.tabs {
+	display: flex;
+	gap: var(--s2);
+}
+
+.tab {
+	padding: var(--s2) var(--s4);
+	min-block-size: 44px;
+	border: 1px solid transparent;
+	border-radius: var(--r-1);
+	font-size: var(--fs-sm);
+	color: var(--ink-600);
+}
+
+.tab.is-active {
+	border-color: var(--acc);
+	color: var(--acc);
+	font-weight: 600;
+}
+
+.tab-panel[hidden] {
+	display: none;
+}
+
+[data-motion='full'] .tab-panel {
+	animation: tab-in 160ms var(--ease-out);
+}
+
+@keyframes tab-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* ---- 02 Category tiles --------------------------------------------------- */
+
+.cat-tiles {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--gutter);
+	margin: 0;
+}
+
+@media (max-width: 900px) {
+	.cat-tiles {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.cat-tile__link {
+	position: relative;
+	display: block;
+	aspect-ratio: 1;
+	overflow: hidden;
+	background: var(--cream-200);
+	text-decoration: none;
+}
+
+/* Not equal: the lead tile is two rows tall. */
+.cat-tile--lead {
+	grid-row: span 2;
+}
+
+.cat-tile--lead .cat-tile__link {
+	aspect-ratio: auto;
+	block-size: 100%;
+}
+
+.cat-tile__link img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+.cat-tile__label {
+	position: absolute;
+	inset-block-end: var(--s4);
+	inset-inline-start: var(--s4);
+	display: flex;
+	align-items: baseline;
+	gap: var(--s2);
+	padding: var(--s2) var(--s4);
+	background: var(--cream-050);
+	font-weight: 600;
+}
+
+.cat-tile__count {
+	color: var(--brown-500);
+}
+
+[data-motion='full'] .cat-tile__link img {
+	transition: transform var(--dur-4) var(--ease-out);
+}
+
+[data-motion='full'] .cat-tile__link:hover img {
+	transform: scale(1.04);
+}
+
+/* ---- 04 Collection (horizontal) ------------------------------------------ */
+
+.collection {
+	position: relative;
+	padding-inline: 0;
+}
+
+.collection__rail {
+	position: absolute;
+	inset-block-start: var(--s7);
+	inset-inline-end: var(--page-margin);
+	z-index: 2;
+}
+
+.collection__track {
+	display: flex;
+	gap: var(--s5);
+	padding-inline: var(--page-margin);
+	overflow-x: auto;
+	overflow-y: hidden;
+	/* PROXIMITY, not mandatory: mandatory fights the user's finger. */
+	scroll-snap-type: inline proximity;
+	scrollbar-width: none;
+}
+
+.collection__track::-webkit-scrollbar {
+	display: none;
+}
+
+.collection__frame {
+	scroll-snap-align: start;
+	flex: none;
+}
+
+.collection__frame--title {
+	inline-size: 44vw;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s4);
+	justify-content: center;
+	align-items: flex-start;
+	padding-inline-end: var(--s7);
+}
+
+@media (max-width: 720px) {
+	.collection__frame--title {
+		inline-size: 84vw;
+	}
+}
+
+.collection__eyebrow {
+	color: var(--acc-deep);
+}
+
+.collection__story {
+	max-inline-size: 32ch;
+	color: var(--ink-600);
+}
+
+.collection__frame--product {
+	inline-size: 26vw;
+	max-inline-size: 320px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+}
+
+@media (max-width: 720px) {
+	.collection__frame--product {
+		inline-size: 62vw;
+	}
+}
+
+.collection__plate {
+	display: grid;
+	place-items: center;
+	aspect-ratio: 4 / 5;
+	background: var(--cream-050);
+	overflow: hidden;
+}
+
+.collection__plate img {
+	inline-size: 100%;
+	block-size: 100%;
+}
+
+.collection__plate.is-studio img {
+	object-fit: contain;
+	padding: 10%;
+	mix-blend-mode: multiply;
+}
+
+.collection__plate.is-scene img {
+	object-fit: contain;
+}
+
+.collection__name {
+	font-size: var(--fs-md);
+}
+
+.collection__price {
+	font-weight: 600;
+}
+
+.collection__frame--end {
+	inline-size: 30vw;
+	display: grid;
+	place-items: center;
+	background: var(--ink-900);
+	padding: var(--s7);
+}
+
+.collection__end-link {
+	color: var(--cream-050);
+	text-decoration: none;
+}
+
+.collection__progress {
+	block-size: 1px;
+	background: var(--cream-200);
+	margin: var(--s6) var(--page-margin) 0;
+}
+
+.collection__progress-fill {
+	display: block;
+	block-size: 100%;
+	background: var(--acc);
+	transform: scaleX(0);
+	/* RTL: the rail fills from the inline-start edge, which is the right. */
+	transform-origin: right;
+}
+
+@supports (animation-timeline: scroll(nearest inline)) {
+	.collection__progress-fill {
+		animation: collection-progress linear both;
+		animation-timeline: scroll(nearest inline);
+	}
+}
+
+@keyframes collection-progress {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/* ---- 05 offset ----------------------------------------------------------- */
+/* ONE card. Not a masonry, not randomised. */
+
+@media (min-width: 1101px) {
+	.products--offset > .product-card:nth-child(2) {
+		margin-block-start: var(--s9);
+	}
+}
+
+/* ---- 06 Portals ---------------------------------------------------------- */
+
+.portals {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--gutter);
+	margin: 0;
+}
+
+@media (max-width: 900px) {
+	.portals {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.portal {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+	text-decoration: none;
+}
+
+.portal__frame {
+	position: relative;
+	display: block;
+	aspect-ratio: 3 / 4;
+	overflow: hidden;
+	background: var(--cream-050);
+	/* The only radius in the system. */
+	border-radius: var(--r-arch);
+}
+
+.portal__frame img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+.portal__label {
+	text-align: center;
+	font-size: var(--fs-md);
+	font-family: var(--ff-editorial);
+}
+
+[data-motion='full'] .portal__frame img {
+	transition: transform var(--dur-4) var(--ease-out);
+}
+
+[data-motion='full'] .portal:hover .portal__frame img {
+	transform: scale(1.05);
+}
+
+/* ---- 07 Inspiration ------------------------------------------------------ */
+
+.inspiration {
+	display: grid;
+	grid-template-columns: 7fr 4fr;
+	gap: var(--gutter);
+	align-items: start;
+}
+
+@media (max-width: 900px) {
+	.inspiration {
+		grid-template-columns: 1fr;
+	}
+}
+
+.inspiration__lead {
+	position: relative;
+}
+
+.inspiration__media {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	background: var(--cream-200);
+	aspect-ratio: 4 / 3;
+}
+
+.inspiration__media img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+.inspiration__text {
+	position: relative;
+	/* The overlap: the text crosses one column over the image. */
+	margin-block-start: calc(var(--s7) * -1);
+	margin-inline-start: var(--s7);
+	background: var(--cream-100);
+	padding: var(--s5) var(--s5) 0 0;
+	max-inline-size: 46ch;
+}
+
+@media (max-width: 900px) {
+	.inspiration__text {
+		margin: var(--s4) 0 0;
+		padding: 0;
+	}
+}
+
+.inspiration__text h3,
+.inspiration__item h3 {
+	font-size: var(--fs-lg);
+	font-weight: 400;
+	margin-block-end: var(--s2);
+}
+
+.inspiration__text a,
+.inspiration__item a {
+	text-decoration: none;
+}
+
+.inspiration__text p {
+	color: var(--ink-600);
+}
+
+.inspiration__side {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s6);
+}
+
+.inspiration__item h3 {
+	font-size: var(--fs-md);
+	margin-block-start: var(--s3);
+}
+
+.inspiration__item .inspiration__media {
+	aspect-ratio: 3 / 2;
+}
+
+/* ---- 08 Trust ------------------------------------------------------------ */
+
+.section__body--full {
+	grid-column: 1 / -1;
+}
+
+.trust__list {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--s5);
+	margin: 0;
+}
+
+@media (max-width: 900px) {
+	.trust__list {
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--s6);
+	}
+}
+
+.trust__item {
+	padding-inline-start: var(--s5);
+	border-inline-start: 1px solid rgb(250 246 239 / 0.16);
+}
+
+.trust__item:first-child {
+	border-inline-start: 0;
+	padding-inline-start: 0;
+}
+
+@media (max-width: 900px) {
+	.trust__item:nth-child(odd) {
+		border-inline-start: 0;
+		padding-inline-start: 0;
+	}
+}
+
+.trust__num {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-xl);
+	line-height: 1.1;
+	display: flex;
+	align-items: baseline;
+	gap: var(--s2);
+}
+
+.trust__unit {
+	font-family: var(--ff-body);
+	font-size: var(--fs-sm);
+	opacity: 0.7;
+}
+
+.trust__label {
+	margin-block-start: var(--s2);
+	font-size: var(--fs-sm);
+	opacity: 0.7;
+}

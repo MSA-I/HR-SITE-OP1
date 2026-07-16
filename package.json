@@ -1,0 +1,15 @@
+{
+  "name": "hr-design-theme",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "seed": "node tools/seed/fetch.mjs",
+    "fonts": "node tools/fonts.mjs",
+    "gate": "node tools/seed/gate-phase2.mjs"
+  },
+  "devDependencies": {
+    "vite": "^7.1.5"
+  }
+}

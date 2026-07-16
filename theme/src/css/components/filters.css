@@ -1,0 +1,152 @@
+.archive-layout {
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	gap: var(--s7);
+	align-items: start;
+}
+
+/*
+ * A grid item's min-width is auto, meaning it refuses to shrink below its content. A
+ * long colour name in the filter rail was enough to force the aside to 460px inside a
+ * 390px viewport and push the whole page sideways. This is the fix for the entire class
+ * of "my grid overflows on mobile" bugs.
+ */
+.archive-layout > * {
+	min-inline-size: 0;
+}
+
+@media (max-width: 900px) {
+	.archive-layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+.filters {
+	position: sticky;
+	inset-block-start: calc(72px + var(--s5));
+	display: flex;
+	flex-direction: column;
+	gap: var(--s6);
+}
+
+@media (max-width: 900px) {
+	.filters {
+		position: static;
+	}
+}
+
+.filters__head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s3);
+	padding-block-end: var(--s3);
+	border-block-end: var(--rule);
+}
+
+.filters__title {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-mono);
+	letter-spacing: 0.08em;
+	color: var(--brown-500);
+	font-weight: 400;
+}
+
+.filters__clear {
+	font-size: var(--fs-xs);
+	color: var(--acc);
+}
+
+.filters__group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+}
+
+.filters__label {
+	font-size: var(--fs-sm);
+	font-weight: 600;
+}
+
+.filters__list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s1);
+	margin: 0;
+}
+
+.filter-chip {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+	padding: var(--s2) var(--s3);
+	min-block-size: 36px;
+	text-decoration: none;
+	font-size: var(--fs-sm);
+	border: 1px solid transparent;
+	border-radius: var(--r-1);
+}
+
+.filter-chip:hover {
+	border-color: var(--cream-200);
+}
+
+.filter-chip.is-active {
+	background: var(--acc-tint);
+	border-color: var(--acc);
+	font-weight: 600;
+}
+
+.filter-chip__name {
+	flex: 1;
+	min-inline-size: 0;
+	/* Colour names run long ("ארוג אופוייט ר.זהב"); a chip is one line. */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.filter-chip__count {
+	color: var(--brown-500);
+}
+
+.filters__price {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+}
+
+.filters__price input {
+	inline-size: 100%;
+	min-inline-size: 0;
+	padding: var(--s2) var(--s3);
+	border: var(--rule);
+	border-radius: var(--r-1);
+	background: var(--cream-050);
+	font-family: var(--ff-mono);
+	font-size: var(--fs-xs);
+	/* Numeric input in an RTL page: the digits are Latin and must run LTR. */
+	direction: ltr;
+	text-align: end;
+}
+
+.filters__check {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+	font-size: var(--fs-sm);
+	min-block-size: 44px;
+	cursor: pointer;
+}
+
+.filters__check input {
+	inline-size: 16px;
+	block-size: 16px;
+	accent-color: var(--acc);
+}
+
+.filters__submit {
+	align-self: start;
+	font-size: var(--fs-sm);
+	padding: var(--s2) var(--s5);
+}

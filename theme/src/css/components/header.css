@@ -1,0 +1,146 @@
+/*
+ * The header never hides and never shrinks on scroll. Both are "chrome that moves" —
+ * the same complaint the brief makes about buttons that move — and the shrink is a
+ * layout shift on every scroll event. Only the bottom hairline fades in past 40px.
+ */
+
+.site-header {
+	position: sticky;
+	inset-block-start: 0;
+	z-index: 50;
+	background: var(--cream-100);
+	border-block-end: 1px solid transparent;
+}
+
+.site-header__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--s6);
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding: var(--s4) var(--page-margin);
+	min-block-size: 72px;
+}
+
+.site-header__logo {
+	font-family: var(--ff-display);
+	font-weight: 300;
+	font-size: var(--fs-lg);
+	letter-spacing: -0.015em;
+	text-decoration: none;
+	white-space: nowrap;
+	/* A flex item will not shrink below its content by default, and this one is
+	   nowrap — so at 390px it pushed the whole header past the viewport and took the
+	   entire document with it. */
+	flex: 0 1 auto;
+	min-inline-size: 0;
+}
+
+.site-nav {
+	min-inline-size: 0;
+}
+
+.site-nav__list {
+	display: flex;
+	align-items: center;
+	gap: var(--s6);
+	margin: 0;
+	min-inline-size: 0;
+}
+
+/* ---- Mobile header ------------------------------------------------------- */
+/*
+ * Three flex children — logo, nav, actions — do not fit in 390px. They overflowed the
+ * header by 102px, which propagated to the document: every element on the page shifted
+ * and the body scrolled sideways.
+ */
+
+@media (max-width: 720px) {
+	.site-header__inner {
+		flex-wrap: wrap;
+		gap: var(--s3);
+		padding-inline: var(--s4);
+		row-gap: var(--s2);
+	}
+
+	.site-header__logo {
+		font-size: var(--fs-md);
+		order: 1;
+	}
+
+	.header-actions {
+		order: 2;
+		gap: var(--s2);
+	}
+
+	.site-nav {
+		/* Below the logo and the actions, full width, its own scroller if it has to be. */
+		order: 3;
+		flex-basis: 100%;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.site-nav::-webkit-scrollbar {
+		display: none;
+	}
+
+	.site-nav__list {
+		gap: var(--s4);
+		padding-block-end: var(--s1);
+	}
+
+	.site-nav__link {
+		white-space: nowrap;
+		min-block-size: 36px;
+	}
+}
+
+.site-nav__list a {
+	text-decoration: none;
+	font-size: var(--fs-sm);
+	padding-block: var(--s2);
+}
+
+.site-nav__list a:hover {
+	color: var(--acc);
+}
+
+/* ---- Footer -------------------------------------------------------------- */
+
+.site-footer {
+	background: var(--brown-700);
+	color: var(--cream-050);
+	padding-block: var(--s8);
+	margin-block-start: var(--s10);
+}
+
+.site-footer__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--s5);
+	flex-wrap: wrap;
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-margin);
+}
+
+.site-footer__copy {
+	font-size: var(--fs-sm);
+	opacity: 0.7;
+}
+
+.motion-toggle {
+	font-size: var(--fs-xs);
+	padding: var(--s2) var(--s4);
+	border: 1px solid rgb(250 246 239 / 0.3);
+	border-radius: var(--r-1);
+	color: inherit;
+}
+
+.motion-toggle[aria-pressed='true'] {
+	background: var(--cream-050);
+	color: var(--brown-700);
+}

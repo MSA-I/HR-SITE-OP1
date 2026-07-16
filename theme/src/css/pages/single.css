@@ -1,0 +1,367 @@
+.pdp {
+	display: grid;
+	grid-template-columns: 7fr 5fr;
+	gap: var(--s8);
+	align-items: start;
+	margin-block-start: var(--s6);
+}
+
+@media (max-width: 900px) {
+	.pdp {
+		grid-template-columns: 1fr;
+		gap: var(--s6);
+	}
+}
+
+/* ---- Media column -------------------------------------------------------- */
+
+.pdp-media {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s5);
+}
+
+.pdp-frame {
+	margin: 0;
+	background: var(--acc-tint);
+	position: relative;
+}
+
+.pdp-frame--plate {
+	aspect-ratio: 4 / 5;
+	display: grid;
+	place-items: center;
+	overflow: hidden;
+}
+
+/* Same measured branch as the card — see components/card.css. */
+.pdp-plate__img {
+	inline-size: 100%;
+	block-size: 100%;
+}
+
+.pdp.is-studio .pdp-plate__img {
+	object-fit: contain;
+	padding: 10%;
+	mix-blend-mode: multiply;
+}
+
+.pdp.is-scene .pdp-plate__img {
+	object-fit: contain;
+	padding: 0;
+}
+
+/* A scene frame has no tint to show through, so it gets the hairline the plate does
+   not need. */
+.pdp.is-scene .pdp-frame--plate {
+	background: var(--cream-050);
+	border: var(--rule);
+}
+
+/*
+ * The shared element the card morphs into (M6). Scoped to [data-plate] — the FIRST
+ * frame only. view-transition-name must be unique per document, and a product with a
+ * 3-image gallery would otherwise name three elements and the browser would drop the
+ * transition entirely.
+ */
+[data-plate] .pdp-plate__img {
+	view-transition-name: product-plate;
+}
+
+.pdp.no-multiply .pdp-plate__img {
+	mix-blend-mode: normal;
+}
+
+.pdp-frame--diagram,
+.pdp-frame--scale {
+	background: var(--cream-050);
+	border: var(--rule);
+	padding: var(--s6) var(--s5) var(--s4);
+}
+
+.dim-diagram,
+.scale-ref {
+	inline-size: 100%;
+	block-size: auto;
+	/* Technical drawings: the axes are physical, not text flow. */
+	direction: ltr;
+}
+
+.pdp-frame__cap {
+	margin-block-start: var(--s3);
+	padding-block-start: var(--s3);
+	border-block-start: var(--rule);
+	text-align: center;
+	direction: rtl;
+}
+
+/* ---- Buy box ------------------------------------------------------------- */
+
+.pdp__summary {
+	position: sticky;
+	inset-block-start: calc(72px + var(--s5));
+	display: flex;
+	flex-direction: column;
+	gap: var(--s4);
+}
+
+@media (max-width: 900px) {
+	.pdp__summary {
+		position: static;
+	}
+}
+
+.pdp__eyebrow {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-mono);
+	letter-spacing: 0.08em;
+	color: var(--acc);
+}
+
+.pdp__title {
+	font-family: var(--ff-editorial);
+	font-weight: 400;
+	font-size: var(--fs-xl);
+	line-height: 1.15;
+}
+
+.pdp__price {
+	font-size: var(--fs-lg);
+	font-weight: 600;
+}
+
+.pdp__price del {
+	color: var(--ink-600);
+	font-weight: 400;
+	font-size: var(--fs-md);
+	opacity: 0.7;
+	margin-inline-end: var(--s2);
+}
+
+.pdp__price ins {
+	text-decoration: none;
+	color: var(--sale-500);
+}
+
+.stock-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--s2);
+	align-self: start;
+	padding: 2px var(--s3);
+	border-radius: var(--r-pill);
+	border: 1px solid var(--ok-500);
+	color: var(--ok-500);
+	font-size: var(--fs-xs);
+}
+
+.stock-chip::before {
+	content: '';
+	inline-size: 6px;
+	block-size: 6px;
+	border-radius: var(--r-pill);
+	background: currentColor;
+}
+
+.stock-chip--out {
+	border-color: var(--ink-600);
+	color: var(--ink-600);
+}
+
+.pdp__delivery {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-mono);
+	letter-spacing: 0.08em;
+	color: var(--brown-500);
+}
+
+.pdp__spec {
+	padding-block-start: var(--s4);
+	border-block-start: var(--rule);
+	color: var(--brown-500);
+}
+
+.whatsapp-link {
+	align-self: start;
+	font-size: var(--fs-sm);
+	color: var(--ink-600);
+}
+
+.whatsapp-link:hover {
+	color: var(--acc);
+}
+
+/* ---- Cart form ----------------------------------------------------------- */
+
+.pdp .cart {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s4);
+	margin: 0;
+}
+
+.pdp .quantity {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+}
+
+.pdp .quantity input {
+	inline-size: 72px;
+	padding: var(--s3);
+	border: var(--rule);
+	border-radius: var(--r-1);
+	background: var(--cream-050);
+	text-align: center;
+	direction: ltr;
+	min-block-size: 44px;
+}
+
+.pdp .single_add_to_cart_button {
+	inline-size: 100%;
+	min-block-size: 52px;
+	background: var(--ink-900);
+	color: var(--cream-050);
+	border: 1px solid var(--ink-900);
+	border-radius: var(--r-1);
+	font-weight: 600;
+	font-size: var(--fs-base);
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.pdp .single_add_to_cart_button::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: var(--acc);
+	transform: scaleY(0);
+	transform-origin: bottom;
+}
+
+[data-motion='full'] .pdp .single_add_to_cart_button::before {
+	transition: transform var(--dur-2) var(--ease-out);
+}
+
+[data-motion='full'] .pdp .single_add_to_cart_button:hover::before {
+	transform: scaleY(1);
+}
+
+/* ---- Tabs / accordion ---------------------------------------------------- */
+
+.pdp-details {
+	margin-block-start: var(--s9);
+	display: flex;
+	flex-direction: column;
+}
+
+.pdp-details details {
+	border-block-start: var(--rule);
+	padding-block: var(--s4);
+}
+
+.pdp-details details:last-of-type {
+	border-block-end: var(--rule);
+}
+
+.pdp-details summary {
+	cursor: pointer;
+	font-weight: 600;
+	min-block-size: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	list-style: none;
+}
+
+.pdp-details summary::-webkit-details-marker {
+	display: none;
+}
+
+.pdp-details summary::after {
+	content: '+';
+	font-family: var(--ff-mono);
+	color: var(--brown-500);
+}
+
+.pdp-details details[open] summary::after {
+	content: '−';
+}
+
+.pdp-details__body {
+	padding-block-start: var(--s3);
+	color: var(--ink-600);
+	max-inline-size: 70ch;
+}
+
+/* ---- Related ------------------------------------------------------------- */
+
+.related {
+	margin-block-start: var(--s9);
+	padding-block-start: var(--s6);
+	border-block-start: var(--rule);
+}
+
+.related > h2 {
+	font-family: var(--ff-display);
+	font-weight: 300;
+	font-size: var(--fs-d-s);
+	letter-spacing: -0.015em;
+	margin-block-end: var(--s6);
+}
+
+/* ---- M16: mobile buy bar ------------------------------------------------- */
+/*
+ * Enters only once the in-flow add-to-cart button has scrolled away. Never fixed on
+ * load: pinning a bar to the bottom before the user has even seen the product steals
+ * 15% of the viewport to sell something they haven't looked at.
+ */
+
+.buy-bar {
+	position: fixed;
+	inset-inline: 0;
+	inset-block-end: 0;
+	z-index: 60;
+	display: none;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--s4);
+	padding: var(--s3) var(--s4);
+	padding-block-end: calc(var(--s3) + env(safe-area-inset-bottom));
+	background: var(--cream-050);
+	border-block-start: var(--rule);
+	box-shadow: var(--shadow-contact);
+	transform: translateY(100%);
+}
+
+@media (max-width: 900px) {
+	.buy-bar {
+		display: flex;
+	}
+}
+
+[data-motion='full'] .buy-bar {
+	transition: transform var(--dur-2) var(--ease-out);
+}
+
+[data-motion='reduced'] .buy-bar {
+	transform: none;
+	opacity: 0;
+	transition: opacity var(--dur-2) linear;
+}
+
+.buy-bar.is-in {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+.buy-bar__price {
+	font-weight: 600;
+}
+
+.buy-bar .btn {
+	flex: 1;
+	max-inline-size: 200px;
+}

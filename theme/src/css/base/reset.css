@@ -1,0 +1,95 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+* {
+	margin: 0;
+}
+
+html {
+	/* No global scroll-behavior: smooth. It fights anchor navigation, ignores
+	   reduced-motion in some engines, and makes ESC-to-stop impossible. Applied
+	   per-interaction instead, gated on [data-motion="full"]. */
+	-webkit-text-size-adjust: 100%;
+}
+
+img,
+picture,
+svg,
+video {
+	display: block;
+	max-inline-size: 100%;
+	block-size: auto;
+}
+
+input,
+button,
+textarea,
+select {
+	font: inherit;
+	color: inherit;
+}
+
+button {
+	background: none;
+	border: 0;
+	cursor: pointer;
+}
+
+a {
+	color: inherit;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+}
+
+ul[class],
+ol[class] {
+	list-style: none;
+	padding: 0;
+}
+
+:focus-visible {
+	outline: 2px solid var(--acc);
+	outline-offset: 3px;
+}
+
+.skip-link {
+	position: absolute;
+	inset-block-start: -100px;
+	inset-inline-start: var(--s4);
+	z-index: 999;
+	padding: var(--s3) var(--s5);
+	background: var(--ink-900);
+	color: var(--cream-050);
+}
+
+.skip-link:focus {
+	inset-block-start: var(--s4);
+}
+
+.visually-hidden {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/*
+ * Safety net only. The real gate is [data-motion="full"] scoping on every animation —
+ * that one also survives JS being disabled and powers the footer opt-out. This catches
+ * anything that slips through.
+ */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

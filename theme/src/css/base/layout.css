@@ -1,0 +1,141 @@
+/*
+ * The grid.
+ *
+ * Column 1 — the RIGHTMOST column in RTL — is a permanent hanging rail that holds no
+ * content: only a rotated section index and a vertical hairline. Content lives in
+ * columns 2-12. Every section starts at the same inline offset, and that consistency
+ * is exactly what licenses the sections that break it.
+ *
+ * Everything here uses logical properties. There is no rtl.css and no build-time flip:
+ * the site is Hebrew-only, so it is authored natively RTL. The two documented
+ * exceptions live in components/hotspot.css.
+ */
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	gap: var(--gutter);
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-margin);
+}
+
+@media (max-width: 900px) {
+	.grid {
+		grid-template-columns: repeat(6, 1fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.grid {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}
+
+/* ---- The rail ------------------------------------------------------------ */
+
+.section {
+	position: relative;
+	padding-block: var(--section-pad);
+}
+
+@media (max-width: 640px) {
+	.section {
+		padding-block: var(--s8);
+	}
+}
+
+.section__rail {
+	grid-column: 1;
+	position: relative;
+	display: flex;
+	justify-content: center;
+}
+
+.section__index {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-mono);
+	letter-spacing: 0.08em;
+	color: var(--brown-500);
+	/* Never writing-mode: vertical-rl on Hebrew — it rotates glyphs into nonsense.
+	   Rotating the whole inline-block keeps the line horizontally typeset. */
+	transform: rotate(-90deg);
+	transform-origin: center;
+	white-space: nowrap;
+	block-size: max-content;
+	position: sticky;
+	inset-block-start: var(--s8);
+}
+
+.section__rail::after {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 50%;
+	inline-size: 1px;
+	background: var(--cream-200);
+}
+
+.section__body {
+	grid-column: 2 / -1;
+}
+
+@media (max-width: 900px) {
+	.section__rail {
+		display: none;
+	}
+
+	.section__body {
+		grid-column: 1 / -1;
+	}
+}
+
+/* ---- Grounds ------------------------------------------------------------- */
+
+.ground--cream {
+	background: var(--cream-100);
+}
+
+.ground--cream-alt {
+	background: var(--cream-200);
+}
+
+.ground--ink {
+	background: var(--ink-900);
+	color: var(--cream-050);
+}
+
+.ground--brown {
+	background: var(--brown-700);
+	color: var(--cream-050);
+}
+
+.ground--accent {
+	background: var(--acc-tint);
+}
+
+.ground--ink .section__index,
+.ground--brown .section__index {
+	color: rgb(250 246 239 / 0.5);
+}
+
+.ground--ink .section__rail::after,
+.ground--brown .section__rail::after {
+	background: rgb(250 246 239 / 0.16);
+}
+
+/* Full-bleed: sections 01, 03, 04 escape the content column entirely. */
+.bleed {
+	max-inline-size: none;
+	padding-inline: 0;
+}
+
+/* ---- Rules --------------------------------------------------------------- */
+/* Hairlines run full-bleed to the section edges, not inset to the content column.
+   That is what makes them read as architecture rather than as cards. */
+
+.rule {
+	border: 0;
+	border-block-start: var(--rule);
+	inline-size: 100%;
+}

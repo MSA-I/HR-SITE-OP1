@@ -1,0 +1,93 @@
+/* M14 — the add-to-cart record. */
+
+.toast {
+	position: fixed;
+	inset-block-start: calc(72px + var(--s4));
+	inset-inline-end: var(--s5);
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	gap: var(--s4);
+	max-inline-size: min(380px, calc(100vw - 2 * var(--s4)));
+	padding: var(--s4) var(--s5);
+	background: var(--cream-050);
+	border: 1px solid rgb(25 21 18 / 0.12);
+	border-radius: var(--r-1);
+	box-shadow: var(--shadow-contact);
+	font-size: var(--fs-sm);
+
+	opacity: 0;
+	pointer-events: none;
+}
+
+.toast--err {
+	border-inline-start: 3px solid var(--err-500);
+}
+
+.toast a {
+	margin-inline-start: auto;
+	white-space: nowrap;
+	color: var(--acc);
+	font-weight: 600;
+}
+
+[data-motion='full'] .toast {
+	transform: translateY(-8px);
+	transition:
+		opacity var(--dur-2) var(--ease-out),
+		transform var(--dur-2) var(--ease-out);
+}
+
+[data-motion='full'] .toast.is-in {
+	transform: translateY(0);
+}
+
+[data-motion='reduced'] .toast {
+	transition: opacity 150ms linear;
+}
+
+.toast.is-in {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+	.toast {
+		inset-inline: var(--s4);
+		max-inline-size: none;
+	}
+}
+
+/* ---- Header cart / wishlist counts --------------------------------------- */
+
+.header-actions {
+	display: flex;
+	align-items: center;
+	gap: var(--s5);
+}
+
+.header-action {
+	position: relative;
+	display: grid;
+	place-items: center;
+	inline-size: 44px;
+	block-size: 44px;
+	text-decoration: none;
+}
+
+.header-action__count {
+	position: absolute;
+	inset-block-start: 2px;
+	inset-inline-end: 2px;
+	min-inline-size: 18px;
+	block-size: 18px;
+	display: grid;
+	place-items: center;
+	padding-inline: 4px;
+	border-radius: var(--r-pill);
+	background: var(--acc);
+	color: var(--acc-on);
+	font-family: var(--ff-mono);
+	font-size: 10px;
+	line-height: 1;
+}

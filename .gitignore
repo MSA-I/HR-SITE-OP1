@@ -1,0 +1,26 @@
+# Build output and dependencies
+node_modules/
+theme/assets/dist/
+
+# Self-hosted webfonts.
+#
+# Karantina, Assistant, Frank Ruhl Libre and IBM Plex Mono are OFL. Redistributing the
+# files would mean shipping the licence text with them; `node tools/fonts.mjs` fetches
+# them in one command, so there is nothing to gain by committing them.
+theme/src/fonts/
+theme/assets/fonts/
+
+# ---------------------------------------------------------------------------
+# Everything seeded from hr-design.co.il.
+#
+# This repository is PUBLIC, and none of this content is ours: 409 product photographs,
+# the catalogue text and descriptions, and the composed scene SVGs with their photography
+# embedded as base64. Fetching it into a local dev environment is one thing; republishing
+# a third party's commercial catalogue and imagery under our own name is another.
+#
+# Nothing is lost by excluding it — `node tools/seed/fetch.mjs` reproduces the whole seed,
+# and the README documents the sequence.
+# ---------------------------------------------------------------------------
+seed/
+
+*.log

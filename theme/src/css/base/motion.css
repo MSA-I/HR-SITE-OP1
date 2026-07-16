@@ -1,0 +1,203 @@
+/*
+ * Motion.
+ *
+ * Everything here is scoped to [data-motion="full"]. That attribute is set by an inline
+ * script in <head> before first paint, from localStorage ?? the OS preference. Three
+ * consequences, all deliberate:
+ *   - the OS setting is honoured on the first frame, no FOUC
+ *   - the footer toggle can override it without the user touching an OS setting most
+ *     Windows users in Israel have never seen
+ *   - with JS disabled the attribute is absent, so the site renders fully static
+ *
+ * Reduced mode keeps opacity and kills every transform: the vestibular triggers are
+ * movement and scale, not fades. It produces a calm site, not a dead one.
+ *
+ * Only transform and opacity are animated. Where the design wants a colour change it is
+ * an overlay pseudo-element changing opacity, never background-color.
+ */
+
+/* ---- M1: scroll image reveal -------------------------------------------- */
+
+.reveal {
+	position: relative;
+	overflow: hidden;
+}
+
+.reveal__curtain {
+	position: absolute;
+	inset: 0;
+	background: var(--cream-100);
+	transform-origin: bottom;
+	pointer-events: none;
+}
+
+[data-motion='full'] .reveal img {
+	transform: scale(1.08);
+	transition: transform var(--dur-4) var(--ease-entrance);
+}
+
+[data-motion='full'] .reveal__curtain {
+	transform: scaleY(1);
+	transition: transform 900ms var(--ease-entrance);
+}
+
+[data-motion='full'] .reveal.is-in img {
+	transform: scale(1);
+}
+
+[data-motion='full'] .reveal.is-in .reveal__curtain {
+	transform: scaleY(0);
+}
+
+/* Reduced: fade, no wipe, no scale. */
+[data-motion='reduced'] .reveal__curtain {
+	display: none;
+}
+
+[data-motion='reduced'] .reveal img {
+	opacity: 0;
+	transition: opacity 200ms linear;
+}
+
+[data-motion='reduced'] .reveal.is-in img {
+	opacity: 1;
+}
+
+/* ---- M2: staggered text entry -------------------------------------------- */
+
+[data-motion='full'] .stagger > * {
+	opacity: 0;
+	transform: translateY(12px);
+	transition:
+		opacity 480ms var(--ease-entrance),
+		transform 480ms var(--ease-entrance);
+	/* --i is set in markup; the ceiling matters — the brief bans animating every line. */
+	transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+[data-motion='full'] .stagger.is-in > * {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+[data-motion='reduced'] .stagger > * {
+	opacity: 0;
+	transition: opacity 200ms linear; /* no stagger: all at once */
+}
+
+[data-motion='reduced'] .stagger.is-in > * {
+	opacity: 1;
+}
+
+/* ---- M3: hairline draw --------------------------------------------------- */
+
+[data-motion='full'] .rule--draw {
+	transform: scaleX(0);
+	/* RTL: the rule grows from the inline-start edge, which is the right. */
+	transform-origin: right;
+	transition: transform 700ms var(--ease-entrance);
+}
+
+[data-motion='full'] .rule--draw.is-in {
+	transform: scaleX(1);
+}
+
+/* ---- M5/M6: page transitions --------------------------------------------- */
+/*
+ * Cross-document View Transitions. ~15 lines for a 320ms crossfade plus a shared-element
+ * morph from the card plate to the product page. Browsers without support navigate
+ * instantly, which is better than a JS fade, not worse — so there is deliberately no
+ * JS fallback: that path only imports white flashes, stuck overlays on back-nav, and
+ * broken bfcache.
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+	@view-transition {
+		navigation: auto;
+	}
+
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: var(--dur-3);
+		animation-timing-function: var(--ease-out);
+	}
+
+	::view-transition-group(product-plate) {
+		animation-duration: var(--dur-3);
+		animation-timing-function: var(--ease-inout);
+	}
+}
+
+/* ---- M10: card hover ------------------------------------------------------ */
+/* Lives with the card component; see components/card.css. */
+
+/* ---- M11: button fill ----------------------------------------------------- */
+
+.btn {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+	padding: var(--s3) var(--s6);
+	border: 1px solid currentColor;
+	border-radius: var(--r-1);
+	font-weight: 600;
+	min-block-size: 44px;
+}
+
+.btn::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	background: var(--ink-900);
+	transform: scaleY(0);
+	transform-origin: bottom;
+}
+
+[data-motion='full'] .btn::before {
+	transition: transform var(--dur-2) var(--ease-out);
+}
+
+[data-motion='full'] .btn:hover::before,
+[data-motion='full'] .btn:focus-visible::before {
+	transform: scaleY(1);
+}
+
+/* Reduced: the fill fades instead of growing. The button itself never moves in
+   either mode — "buttons that move" is banned by the brief. */
+[data-motion='reduced'] .btn::before {
+	transform: scaleY(1);
+	opacity: 0;
+	transition: opacity var(--dur-1) linear;
+}
+
+[data-motion='reduced'] .btn:hover::before,
+[data-motion='reduced'] .btn:focus-visible::before {
+	opacity: 1;
+}
+
+.btn:hover,
+.btn:focus-visible {
+	color: var(--cream-050);
+}
+
+.btn--primary {
+	background: var(--ink-900);
+	color: var(--cream-050);
+	border-color: var(--ink-900);
+}
+
+.btn--primary::before {
+	background: var(--acc);
+}
+
+/* ---- will-change hygiene -------------------------------------------------- */
+/*
+ * Added on pointerenter, removed on pointerleave, by src/js/lib/motion.js. Never
+ * declared statically: a permanent will-change on 24 grid cards promotes 24 layers
+ * and is a real memory problem on mid-range Android.
+ */
+
+.is-animating {
+	will-change: transform;
+}

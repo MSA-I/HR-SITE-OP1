@@ -1,0 +1,15 @@
+/*
+Theme Name: HR Design
+Theme URI: https://hr-design.co.il
+Author: HR Design
+Description: Modern Eclectic Living — a Hebrew-RTL WooCommerce theme. Gallery Apartment direction: editorial grid, condensed Hebrew display type, product photos as catalogue plates on colour, one rotating accent per collection.
+Version: 0.1.0
+Requires at least: 6.5
+Requires PHP: 8.1
+License: GNU General Public License v2
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: hrdesign
+Tags: e-commerce, rtl-language-support, custom-colors, translation-ready
+*/
+
+/* Real styles live in src/css and are built to assets/dist. This file is the theme header. */

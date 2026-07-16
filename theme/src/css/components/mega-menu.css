@@ -1,0 +1,226 @@
+/*
+ * Mega menu.
+ *
+ * The panel opens on CSS :hover with no JS at all; JS adds hover-intent, keyboard
+ * control and the sliding rule. With JS off it still opens, and every link is real
+ * markup, so it stays crawlable.
+ */
+
+.site-nav__item {
+	position: static; /* the panel is positioned against the header, not the item */
+}
+
+.site-nav__link {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: 44px;
+	padding-inline: var(--s2);
+	font-size: var(--fs-sm);
+	text-decoration: none;
+	color: inherit;
+}
+
+.site-nav__link:hover {
+	color: var(--acc);
+}
+
+/* ---- The sliding rule ---------------------------------------------------- */
+/*
+ * The RULE moves. The buttons never do — "chrome that moves" is the same complaint the
+ * brief makes about buttons that move.
+ */
+
+.site-nav__list {
+	position: relative;
+}
+
+.site-nav__list::after {
+	content: '';
+	position: absolute;
+	inset-block-end: 0;
+	inset-inline-start: 0;
+	block-size: 1px;
+	inline-size: var(--rule-w, 0);
+	background: var(--acc);
+	transform: translateX(var(--rule-x, 0));
+	opacity: 0;
+}
+
+[data-motion='full'] .site-nav__list::after {
+	transition:
+		transform var(--dur-2) var(--ease-out),
+		inline-size var(--dur-2) var(--ease-out),
+		opacity var(--dur-1) var(--ease-out);
+}
+
+.site-nav__list.has-rule::after {
+	opacity: 1;
+}
+
+/* ---- Panel --------------------------------------------------------------- */
+
+.mega {
+	position: absolute;
+	inset-inline: 0;
+	inset-block-start: 100%;
+	z-index: 40;
+	background: var(--cream-050);
+	border-block-start: var(--rule);
+	box-shadow: var(--shadow-contact);
+	/* Fixed, so switching category never reflows the panel. */
+	min-block-size: 420px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.mega[hidden] {
+	/* The attribute is for AT and the no-JS path; visibility is CSS's job. */
+	display: block;
+}
+
+[data-motion='full'] .mega {
+	transform: translateY(-8px);
+	transition:
+		opacity var(--dur-2) var(--ease-out),
+		transform var(--dur-2) var(--ease-out);
+}
+
+[data-motion='reduced'] .mega {
+	transition: opacity var(--dur-1) linear;
+}
+
+/* No-JS: hover opens it. With JS, [data-open] wins via hover-intent. */
+.has-mega:hover .mega,
+.has-mega:focus-within .mega,
+.mega[data-open] {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.mega__inner {
+	display: grid;
+	grid-template-columns: 3fr 3fr 4fr;
+	gap: var(--s7);
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding: var(--s7) var(--page-margin);
+}
+
+/* ---- Col A: categories --------------------------------------------------- */
+
+.mega__cats {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	border-inline-end: var(--rule);
+	padding-inline-end: var(--s5);
+}
+
+.mega__cat {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--s3);
+	min-block-size: 44px;
+	padding-inline: var(--s2);
+	font-size: var(--fs-md);
+	text-decoration: none;
+}
+
+.mega__cat.is-active {
+	color: var(--acc);
+}
+
+.mega__count {
+	color: var(--brown-500);
+	opacity: 0.6;
+}
+
+/* ---- Col B: subcategories ------------------------------------------------ */
+
+.mega__subs {
+	position: relative;
+}
+
+.mega__sub-list {
+	display: none;
+	flex-direction: column;
+	gap: var(--s1);
+	margin: 0;
+}
+
+.mega__sub-list.is-active {
+	display: flex;
+}
+
+.mega__sub-list a {
+	display: block;
+	padding-block: var(--s2);
+	font-size: var(--fs-base);
+	color: var(--ink-600);
+	text-decoration: none;
+}
+
+.mega__sub-list a:hover {
+	color: var(--acc);
+}
+
+/* ---- Col C: the preview plate -------------------------------------------- */
+
+.mega__preview {
+	position: relative;
+	aspect-ratio: 4 / 3;
+	background: var(--acc-tint);
+	overflow: hidden;
+}
+
+.mega__plate {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	opacity: 0;
+	text-decoration: none;
+	pointer-events: none;
+}
+
+.mega__plate.is-active {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+[data-motion='full'] .mega__plate {
+	transition: opacity 180ms var(--ease-out);
+}
+
+.mega__plate img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+.mega__plate-label {
+	position: absolute;
+	inset-block-end: var(--s4);
+	inset-inline-start: var(--s4);
+	padding: var(--s2) var(--s4);
+	background: var(--cream-050);
+	font-size: var(--fs-sm);
+	font-weight: 600;
+}
+
+/* ---- Mobile -------------------------------------------------------------- */
+/*
+ * No mega panel on small screens: it is a desktop affordance. The nav collapses to
+ * plain links, and the category tree is reachable from the shop page.
+ */
+@media (max-width: 900px) {
+	.mega {
+		display: none;
+	}
+
+	.site-nav__list {
+		gap: var(--s4);
+	}
+}

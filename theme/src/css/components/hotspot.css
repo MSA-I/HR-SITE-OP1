@@ -1,0 +1,494 @@
+/*
+ * Shop the Space.
+ *
+ * Section 03 is the one dark section on the page, and that is not decoration: a cream
+ * dot with a contact shadow on an ink ground reads over any photograph we will ever
+ * shoot. It is most of why this section is dark.
+ */
+
+.sts {
+	position: relative;
+	padding-block: var(--section-pad);
+	overflow: hidden;
+}
+
+.sts__head {
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-margin);
+	margin-block-end: var(--s7);
+}
+
+.sts__eyebrow {
+	color: var(--acc);
+	margin-block-end: var(--s3);
+}
+
+.sts__title {
+	color: var(--cream-050);
+}
+
+/* ---- Stage --------------------------------------------------------------- */
+
+.sts__stage {
+	position: relative;
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+	/* Contain the layer blending, so it composites against the room and not the
+	   section's ink ground. */
+	isolation: isolate;
+
+	/*
+	 * DELIBERATE, and one of only two physical-coordinate exceptions in the stylesheet.
+	 *
+	 * Hotspot positions are physical points in a photograph. Inherit RTL and
+	 * `left: 61%` measures from the RIGHT edge — every pin mirrors onto the wrong
+	 * furniture. Casual QA will not catch it, because the dots are still on objects.
+	 * Do not "fix" this.
+	 */
+	direction: ltr;
+}
+
+@media (max-width: 720px) {
+	.sts__stage {
+		aspect-ratio: 4 / 5;
+	}
+}
+
+.sts__layer {
+	position: absolute;
+	inset: 0;
+	/* Pre-scaled so translation never reveals an edge. */
+	will-change: transform;
+}
+
+.sts__layer--bg {
+	scale: 1.06;
+}
+
+.sts__layer--mid {
+	scale: 1.04;
+}
+
+.sts__layer--fore {
+	scale: 1.03;
+}
+
+.sts__img {
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+}
+
+/*
+ * No blend mode here, deliberately.
+ *
+ * The layers carry real alpha: tools/scene/compose.mjs keys the white studio backdrop
+ * out with an SVG colour matrix. mix-blend-mode cannot do this job — the parallax puts a
+ * transform on each layer, a transform makes a stacking context, and a blend mode never
+ * escapes its own stacking context. It looked right until the scene moved.
+ */
+
+/*
+ * M26 — mobile depth comes from scroll, not the pointer. Pure CSS, GPU, free.
+ * Safari has no scroll-driven animations yet, so it simply gets a static scene: the
+ * effect degrades to simpler, never to broken.
+ */
+@media (max-width: 720px) {
+	@supports (animation-timeline: view()) {
+		[data-motion='full'] .sts__layer {
+			animation: sts-drift linear both;
+			animation-timeline: view();
+			animation-range: entry 0% exit 100%;
+		}
+
+		[data-motion='full'] .sts__layer--bg {
+			--drift: 8px;
+		}
+		[data-motion='full'] .sts__layer--mid {
+			--drift: 18px;
+		}
+		[data-motion='full'] .sts__layer--fore {
+			--drift: 30px;
+		}
+	}
+}
+
+@keyframes sts-drift {
+	from {
+		translate: 0 var(--drift);
+	}
+	to {
+		translate: 0 calc(var(--drift) * -1);
+	}
+}
+
+/* ---- Hotspot ------------------------------------------------------------- */
+
+.hotspot {
+	position: absolute;
+	left: var(--x);
+	top: var(--y);
+	transform: translate(-50%, -50%);
+	/* 44px hit target via transparent padding — never a 14px tap target. */
+	padding: 15px;
+	background: none;
+	border: 0;
+	z-index: 3;
+	display: grid;
+	place-items: center;
+}
+
+@media (max-width: 720px) {
+	.hotspot {
+		left: var(--x-m);
+		top: var(--y-m);
+	}
+}
+
+.hotspot__dot {
+	position: relative;
+	display: block;
+	inline-size: 14px;
+	block-size: 14px;
+	border-radius: var(--r-pill);
+	background: var(--cream-050);
+	border: 1px solid rgb(25 21 18 / 0.3);
+	/* The contact shadow is what makes it survive over unknown photography. */
+	box-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
+}
+
+@media (max-width: 720px) {
+	.hotspot__dot {
+		inline-size: 20px;
+		block-size: 20px;
+	}
+}
+
+/* M20 — reveal */
+[data-motion='full'] .hotspot {
+	opacity: 0;
+	scale: 0.4;
+	transition:
+		opacity 420ms var(--ease-pop),
+		scale 420ms var(--ease-pop);
+	transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-motion='reduced'] .hotspot {
+	opacity: 0;
+	transition: opacity 200ms linear; /* no scale, no stagger */
+}
+
+.hotspot.is-in {
+	opacity: 1;
+	scale: 1;
+}
+
+/* M21 — pulse, capped at 3 iterations. An infinite pulse is not an affordance, it is
+   noise: after three cycles the user either understood or never will. */
+.hotspot__dot::after {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	border-radius: var(--r-pill);
+	border: 1px solid var(--cream-050);
+	opacity: 0;
+}
+
+[data-motion='full'] .hotspot.is-in .hotspot__dot::after {
+	animation: hotspot-pulse 2.6s var(--ease-out) 3;
+	animation-delay: calc(var(--reveal-delay, 0ms) + 400ms);
+}
+
+.sts.has-interacted .hotspot__dot::after {
+	animation: none !important;
+}
+
+@keyframes hotspot-pulse {
+	from {
+		opacity: 0.5;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(2.2);
+	}
+}
+
+/* M22 — hover */
+[data-motion='full'] .hotspot__dot {
+	transition:
+		scale 160ms var(--ease-out),
+		background-color 160ms var(--ease-out);
+}
+
+.hotspot:hover .hotspot__dot,
+.hotspot:focus-visible .hotspot__dot {
+	scale: 1.6;
+}
+
+/* M23 — active */
+.hotspot.is-active .hotspot__dot {
+	scale: 1.9;
+	background: var(--acc);
+	border-color: var(--acc);
+}
+
+.hotspot__chip {
+	position: absolute;
+	inset-block-end: calc(100% - 6px);
+	white-space: nowrap;
+	padding: 4px var(--s3);
+	background: rgb(25 21 18 / 0.85);
+	color: var(--cream-050);
+	font-size: var(--fs-xs);
+	border-radius: var(--r-1);
+	opacity: 0;
+	pointer-events: none;
+	/* The chip is Hebrew; the stage is LTR. */
+	direction: rtl;
+}
+
+[data-motion='full'] .hotspot__chip {
+	transition: opacity 160ms var(--ease-out);
+}
+
+.hotspot:hover .hotspot__chip,
+.hotspot:focus-visible .hotspot__chip {
+	opacity: 1;
+}
+
+/* ---- Mini card ----------------------------------------------------------- */
+
+.mini-card {
+	position: fixed;
+	margin: 0;
+	inline-size: 300px;
+	padding: var(--s4);
+	background: var(--cream-050);
+	border: 1px solid rgb(25 21 18 / 0.12);
+	border-radius: var(--r-1);
+	box-shadow: var(--shadow-contact);
+	direction: rtl;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+}
+
+.mini-card:not(:popover-open) {
+	display: none;
+}
+
+/*
+ * The open state is scoped to the same attribute as the closed state on purpose.
+ *
+ * `[data-motion='full'] .mini-card` and `.mini-card:popover-open` have IDENTICAL
+ * specificity (0,2,0), so which one wins depends only on source order — the card opened,
+ * positioned correctly, and stayed at opacity 0. A state rule must be at least as
+ * specific as the rule it overrides.
+ */
+[data-motion='full'] .mini-card {
+	opacity: 0;
+	transform: translateY(6px);
+	transition:
+		opacity 200ms var(--ease-out),
+		transform 200ms var(--ease-out),
+		overlay 200ms allow-discrete,
+		display 200ms allow-discrete;
+}
+
+[data-motion='full'] .mini-card:popover-open {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+@starting-style {
+	[data-motion='full'] .mini-card:popover-open {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+}
+
+/* Reduced motion, and the no-JS path where the attribute is absent entirely. */
+.mini-card:popover-open {
+	opacity: 1;
+}
+
+.mini-card__body {
+	display: flex;
+	gap: var(--s3);
+	align-items: flex-start;
+}
+
+.mini-card__plate {
+	flex: none;
+	inline-size: 88px;
+	block-size: 88px;
+	display: grid;
+	place-items: center;
+	background: var(--acc-tint);
+	overflow: hidden;
+	/* aria-hidden in markup, so it must not be reachable by pointer either — the name
+	   link beside it is the real target. */
+	pointer-events: none;
+}
+
+.mini-card__plate img {
+	inline-size: 100%;
+	block-size: 100%;
+}
+
+/* Same measured branch as the card and the PDP. */
+.mini-card__plate.is-studio img {
+	object-fit: contain;
+	padding: 10%;
+	mix-blend-mode: multiply;
+}
+
+.mini-card__plate.is-scene img {
+	object-fit: cover;
+}
+
+.mini-card__text {
+	min-inline-size: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s1);
+}
+
+.mini-card__name {
+	font-size: var(--fs-md);
+	font-weight: 400;
+	line-height: 1.25;
+}
+
+.mini-card__name a {
+	text-decoration: none;
+}
+
+.mini-card__price {
+	font-weight: 600;
+}
+
+.mini-card__spec {
+	color: var(--brown-500);
+}
+
+.mini-card__cta {
+	inline-size: 100%;
+	min-block-size: 44px;
+	display: grid;
+	place-items: center;
+	text-decoration: none;
+	position: relative;
+	overflow: hidden;
+}
+
+.mini-card__link {
+	font-size: var(--fs-xs);
+	color: var(--ink-600);
+	text-decoration: none;
+}
+
+.mini-card__link:hover {
+	color: var(--acc);
+}
+
+/* M25 — below 720px anchoring is abandoned and it becomes a bottom sheet. */
+@media (max-width: 720px) {
+	.mini-card {
+		inset-inline: 0;
+		inset-block-end: 0;
+		inset-block-start: auto;
+		inline-size: auto;
+		border-radius: 0;
+		padding-block-end: calc(var(--s4) + env(safe-area-inset-bottom));
+	}
+
+	[data-motion='full'] .mini-card {
+		transform: translateY(100%);
+		transition:
+			transform 280ms var(--ease-out),
+			overlay 280ms allow-discrete,
+			display 280ms allow-discrete;
+		opacity: 1;
+	}
+
+	[data-motion='full'] .mini-card:popover-open {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	@starting-style {
+		[data-motion='full'] .mini-card:popover-open {
+			transform: translateY(100%);
+		}
+	}
+}
+
+/* ---- Mobile strip -------------------------------------------------------- */
+/*
+ * On mobile the pins become a legend and this becomes the control.
+ */
+
+.sts__strip {
+	display: none;
+	gap: var(--s3);
+	margin: var(--s5) 0 0;
+	padding-inline: var(--page-margin);
+	overflow-x: auto;
+	scroll-snap-type: inline proximity;
+	-webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 720px) {
+	.sts__strip {
+		display: flex;
+	}
+}
+
+.sts__strip-item {
+	scroll-snap-align: start;
+	inline-size: 128px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	text-align: start;
+	color: var(--cream-050);
+}
+
+.sts__strip-plate {
+	display: grid;
+	place-items: center;
+	aspect-ratio: 1;
+	background: var(--acc-tint);
+	overflow: hidden;
+}
+
+.sts__strip-plate img {
+	inline-size: 100%;
+	block-size: 100%;
+}
+
+.sts__strip-plate.is-studio img {
+	object-fit: contain;
+	padding: 8%;
+	mix-blend-mode: multiply;
+}
+
+.sts__strip-plate.is-scene img {
+	object-fit: cover;
+}
+
+.sts__strip-name {
+	font-size: var(--fs-xs);
+	line-height: 1.3;
+}
+
+.sts__strip-price {
+	font-size: var(--fs-xs);
+	font-weight: 600;
+}

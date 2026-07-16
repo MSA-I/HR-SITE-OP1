@@ -1,0 +1,78 @@
+# ponytail: project name pinned to ASCII — Compose derives it from the directory name,
+# and this directory is Hebrew, which breaks container naming.
+name: hrdesign
+
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wp
+      MARIADB_PASSWORD: wp
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:php8.3-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_DEBUG_LOG', true);
+        define('WP_ENVIRONMENT_TYPE', 'local');
+        // SCRIPT_DEBUG stays OFF: the theme's own assets come from Vite, not WordPress,
+        // so it buys nothing here and costs a lot — it swaps every core and WooCommerce
+        // script for its unminified build (components.js alone goes to 592KB) and pulls
+        // in react-refresh. With it on, every performance number is fiction.
+    volumes:
+      # WP core lives in a named volume — never crosses the Windows/WSL boundary.
+      - wp_core:/var/www/html
+      # ponytail: the only bind mount. Keeps the Hebrew-path blast radius to one line.
+      - ./theme:/var/www/html/wp-content/themes/hr-design
+      # Read-only, and only so the dev-probe mu-plugin can reach the probes. Nothing the
+      # theme needs lives here.
+      - ./tools:/tools:ro
+
+  wpcli:
+    image: wordpress:cli-php8.3
+    # www-data, or wp-cli writes root-owned files into wp_core that Apache can't touch.
+    user: "33:33"
+    depends_on:
+      db:
+        condition: service_healthy
+    # Long-lived, so `docker compose exec wpcli wp ...` hits a warm container.
+    entrypoint: ["sh", "-c", "sleep infinity"]
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: wp
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_core:/var/www/html
+      - ./theme:/var/www/html/wp-content/themes/hr-design
+      # Writable: the importer writes the live->local id map back here, and that map
+      # is what lets Shop-the-Space product references survive a reseed.
+      - ./seed:/seed
+      - ./tools:/tools:ro
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+
+volumes:
+  db_data: {}
+  wp_core: {}

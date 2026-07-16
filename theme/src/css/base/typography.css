@@ -1,0 +1,113 @@
+/*
+ * Hebrew typography.
+ *
+ * The rules here are structural, not decorative. Hebrew has no uppercase and no
+ * ascender/descender silhouette to carry word shape, so the entire Latin luxury
+ * idiom (letterspaced caps, italic emphasis) is unavailable — faking it is exactly
+ * how every Israeli furniture site ended up looking identical.
+ */
+
+body {
+	font-family: var(--ff-body);
+	font-size: var(--fs-base);
+	line-height: var(--lh-body);
+	color: var(--ink-900);
+	background: var(--cream-100);
+	-webkit-font-smoothing: antialiased;
+}
+
+/* ---- Display: Karantina ------------------------------------------------- */
+
+.t-display {
+	font-family: var(--ff-display);
+	font-weight: 300;
+	line-height: var(--lh-display);
+	/* Negative only, and only here. Positive tracking dissolves Hebrew words. */
+	letter-spacing: -0.015em;
+}
+
+.t-display--l {
+	font-size: var(--fs-d-l);
+	letter-spacing: -0.02em;
+}
+
+.t-display--m {
+	font-size: var(--fs-d-m);
+}
+
+.t-display--s {
+	font-size: var(--fs-d-s);
+}
+
+/* ---- Editorial: Frank Ruhl Libre ---------------------------------------- */
+/* Product names and pull-quotes. Nothing else — it shares a designer with
+   Karantina, which is what licenses mixing a condensed display with a serif. */
+
+.t-editorial {
+	font-family: var(--ff-editorial);
+	font-weight: 400;
+	letter-spacing: 0;
+}
+
+/* ---- Measurements: IBM Plex Mono ---------------------------------------- */
+/* Latin digits and units only, never Hebrew. Positive tracking is fine here
+   precisely because the run is Latin. */
+
+.t-mono {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-mono);
+	line-height: var(--lh-mono);
+	letter-spacing: 0.08em;
+	color: var(--brown-500);
+}
+
+/* ---- Bidi isolation ------------------------------------------------------ */
+/*
+ * Mandatory on every number. The shekel sign is a bidi-neutral character: unisolated,
+ * `₪1,290` renders with the sign on the wrong side and `200x90x75 ס"מ` scrambles.
+ * This is a bug class, not a nicety — markup uses <bdi>, this is the safety net.
+ */
+
+.num,
+bdi {
+	direction: ltr;
+	unicode-bidi: isolate;
+}
+
+/* ---- Emphasis ------------------------------------------------------------ */
+/*
+ * Hebrew has no true italic; `font-style: italic` synthesises an oblique that looks
+ * broken. Weight + accent colour IS the emphasis system.
+ */
+
+em,
+i {
+	font-style: normal;
+	font-weight: 600;
+	color: var(--acc);
+}
+
+strong,
+b {
+	font-weight: 600;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	line-height: var(--lh-xl);
+	font-weight: 400;
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+/* ---- Directional icons --------------------------------------------------- */
+/* Arrows and chevrons mirror. Cart, heart, search, WhatsApp never do. */
+
+[dir='rtl'] .icon--directional {
+	transform: scaleX(-1);
+}

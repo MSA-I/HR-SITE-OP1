@@ -1,0 +1,133 @@
+/*
+ * Gallery Apartment — design tokens.
+ *
+ * Grounds never rotate. Accents rotate per collection, and the rotation is a
+ * 3-value enum in the admin, never a colour picker: the whole direction dies the
+ * moment cream stops being a ground and becomes a highlight.
+ */
+
+:root {
+	/* ---- Grounds ---------------------------------------------------------- */
+	--cream-050: #faf6ef; /* cards, mega menu, mini card, floating UI */
+	--cream-100: #f2ece1; /* page base */
+	--cream-200: #e6ddcd; /* alternate ground, hairlines */
+	--brown-500: #7a5c42; /* meta text, mono spec lines */
+	--brown-700: #4a3527; /* benefits band, footer */
+	--ink-600: #5a524a;   /* secondary text — 7.0:1 on cream-100 */
+	--ink-900: #191512;   /* body, buttons, Shop-the-Space ground */
+
+	/* Pure #000 is banned: it reads digital, not gallery. --ink-900 is warm. */
+
+	/* ---- Feedback (not part of the rotation) ------------------------------ */
+	--ok-500: #3f6b4a;
+	--sale-500: #a9482a; /* deliberately == rust: sale is a mode, not a new colour */
+	--err-500: #8c2f2f;
+
+	/* ---- Accent: default collection (Natural Forms / olive) ---------------- */
+	--acc: #5e6b3e;
+	--acc-tint: #dde0cc;
+	--acc-deep: #2f3720;
+	--acc-on: var(--cream-050);
+	--acc-mode: tint;
+
+	/* ---- Type ------------------------------------------------------------- */
+	--ff-display: 'Karantina', 'Arial Hebrew', sans-serif;
+	--ff-body: 'Assistant', 'Arial Hebrew', sans-serif;
+	--ff-editorial: 'Frank Ruhl Libre', 'David Libre', serif;
+	--ff-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+	--fs-mono: 11px;
+	--fs-xs: 13px;
+	--fs-sm: 15px;
+	--fs-base: 17px; /* Hebrew reads small. 15px is the mistake most Israeli sites make. */
+	--fs-md: 20px;
+	--fs-lg: 25px;
+	--fs-xl: 34px;
+
+	/* The gap between 34 and 40 is deliberate. Editorial contrast is a jump, not a
+	   ramp — a smooth 1.25 ramp to 96px is what makes a page look like a template. */
+
+	--fs-d-s: clamp(40px, 6vw, 76px);
+	--fs-d-m: clamp(56px, 9vw, 116px);
+	--fs-d-l: clamp(72px, 15vw, 210px); /* hero + horizontal section only */
+
+	--lh-display: 1.02;
+	--lh-xl: 1.15;
+	--lh-body: 1.6;
+	--lh-long: 1.7;
+	--lh-mono: 1.4;
+
+	/* ---- Space (4px base) ------------------------------------------------- */
+	--s1: 4px;
+	--s2: 8px;
+	--s3: 12px;
+	--s4: 16px;
+	--s5: 24px;
+	--s6: 32px;
+	--s7: 48px;
+	--s8: 64px;
+	--s9: 96px; /* the one asymmetry offset in section 05 — a token, not a magic number */
+	--s10: 144px;
+	--s11: 200px;
+
+	--page-margin: clamp(20px, 4vw, 72px);
+	--gutter: var(--s5);
+	--max-width: 1600px;
+	--section-pad: clamp(80px, 12vh, 160px);
+
+	/* ---- Radius ----------------------------------------------------------- */
+	--r-0: 0; /* the default for everything */
+	--r-1: 2px;
+	--r-pill: 999px; /* status tags and hotspot dots. Nothing else. */
+	--r-arch: 50% 50% 0 0 / 33% 33% 0 0; /* section 06 portals ONLY */
+
+	/* ---- Edges ------------------------------------------------------------ */
+	--rule: 1px solid var(--cream-200);
+	--rule-dark: 1px solid rgb(250 246 239 / 0.16);
+
+	/* ---- Shadow: two exist. That is the whole language. -------------------- */
+	--shadow-contact: 0 2px 6px rgb(25 21 18 / 0.18), 0 12px 32px rgb(25 21 18 / 0.1);
+	--shadow-hard: 6px 6px 0 var(--acc);
+
+	/* No backdrop-filter. No glassmorphism. Depth on the page is overlap, not blur. */
+
+	/* ---- Motion ----------------------------------------------------------- */
+	--dur-1: 120ms;
+	--dur-2: 220ms;
+	--dur-3: 320ms;
+	--dur-4: 620ms;
+	--ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+	--ease-inout: cubic-bezier(0.65, 0.05, 0.36, 1);
+	--ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-pop: cubic-bezier(0.34, 1.36, 0.64, 1); /* cart tick + hotspot reveal. Two uses. */
+}
+
+/*
+ * Collection accents.
+ *
+ * Olive and rust are luminance-matched (~4.87:1 on cream-100) so swapping the accent
+ * never changes contrast or hierarchy weight. Deep blue computes at ~10.4:1 — it reads
+ * as a dark, not a colour — so it flips to reverse mode: cream type on full blue.
+ * That is a rule encoded in a token, not a bug.
+ */
+
+.collection-natural-forms {
+	--acc: #5e6b3e;
+	--acc-tint: #dde0cc;
+	--acc-deep: #2f3720;
+	--acc-mode: tint;
+}
+
+.collection-warm-minimalism {
+	--acc: #a9482a;
+	--acc-tint: #f0dacd;
+	--acc-deep: #52220f;
+	--acc-mode: tint;
+}
+
+.collection-outdoor-living {
+	--acc: #1e3a54;
+	--acc-tint: #d2dae2;
+	--acc-deep: #101f2e;
+	--acc-mode: reverse;
+}

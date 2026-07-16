@@ -1,0 +1,90 @@
+.archive-head {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s4);
+	margin-block-end: var(--s8);
+}
+
+.archive-head__meta {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--s5);
+	flex-wrap: wrap;
+	padding-block-start: var(--s4);
+	border-block-start: var(--rule);
+}
+
+.woocommerce-result-count {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-mono);
+	letter-spacing: 0.08em;
+	color: var(--brown-500);
+	margin: 0;
+}
+
+.woocommerce-ordering select {
+	padding: var(--s2) var(--s3);
+	border: var(--rule);
+	border-radius: var(--r-1);
+	background: var(--cream-050);
+	font-size: var(--fs-sm);
+}
+
+.breadcrumb {
+	color: var(--brown-500);
+}
+
+.breadcrumb a {
+	text-decoration: none;
+}
+
+.breadcrumb a:hover {
+	color: var(--acc);
+}
+
+/* ---- Pagination ---------------------------------------------------------- */
+
+.woocommerce-pagination {
+	margin-block-start: var(--s9);
+	padding-block-start: var(--s5);
+	border-block-start: var(--rule);
+}
+
+/*
+ * Wraps. 11 pages x a 44px minimum target does not fit in a 350px column, and the 44px
+ * is not negotiable — so the row is. Left as nowrap it pushed the whole document 35px
+ * wide and the body scrolled sideways on every archive.
+ */
+.woocommerce-pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--s2);
+	justify-content: center;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.woocommerce-pagination a,
+.woocommerce-pagination span {
+	display: grid;
+	place-items: center;
+	min-inline-size: 44px;
+	min-block-size: 44px;
+	padding-inline: var(--s2);
+	border: var(--rule);
+	text-decoration: none;
+	font-size: var(--fs-sm);
+}
+
+.woocommerce-pagination .current {
+	background: var(--ink-900);
+	color: var(--cream-050);
+	border-color: var(--ink-900);
+}
+
+.woocommerce-pagination a:hover {
+	border-color: var(--acc);
+	color: var(--acc);
+}

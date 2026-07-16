@@ -1,0 +1,417 @@
+/*
+ * The product card.
+ *
+ * The plate is the whole idea: product photos in this catalogue sit on white, so
+ * mix-blend-mode: multiply drops the white and leaves the product plus its own contact
+ * shadow on a coloured ground — a printed catalogue plate on coloured stock. Zero
+ * retouching, one line. The constraint becomes the signature.
+ */
+
+.products {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--s7) var(--gutter);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+@media (max-width: 1400px) {
+	.products {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+@media (max-width: 1100px) {
+	.products {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+/* Deliberately NOT 1-up on mobile: a full-width single card exposes exactly how
+   little data each product carries. Two-up keeps the density that hides it. */
+@media (max-width: 640px) {
+	.products {
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--s5) var(--s3);
+	}
+}
+
+.product-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+}
+
+/* ---- Plate --------------------------------------------------------------- */
+
+.product-card__plate {
+	position: relative;
+	aspect-ratio: 4 / 5;
+	background: var(--cream-050);
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.product-card__link {
+	display: block;
+	block-size: 100%;
+	text-decoration: none;
+}
+
+.product-card__tint {
+	position: absolute;
+	inset: 0;
+	background: var(--acc-tint);
+	opacity: 0;
+	z-index: 0;
+}
+
+/* The tint is always on under multiply — hover only raises it. Without a light plane
+   beneath, multiply would blend the product against the page and go muddy. */
+.product-card__plate::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--cream-050);
+	z-index: 0;
+}
+
+.product-card__img {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	z-index: 1;
+}
+
+/*
+ * Two renderings, chosen per product from measured data (_hrd_photo_type), not from an
+ * assumption about the catalogue.
+ *
+ * The plate premise was that the products are shot on white, so multiply drops the
+ * backdrop. Measured: only 28% are. The other 72% are room photographs — multiplying one
+ * darkens the entire frame and dissolves it into the tint.
+ */
+
+/* Studio cutout: the signature plate. White drops out, the product and its own contact
+   shadow survive on coloured stock. */
+.product-card.is-studio .product-card__img {
+	object-fit: contain;
+	padding: 12%;
+	mix-blend-mode: multiply;
+}
+
+/*
+ * Scene: it is a photograph, so it is shown as one — whole, unblended, seated on the
+ * plate ground like a print on a mat.
+ *
+ * NOT object-fit: cover. 61% of this catalogue is square, so cover in a 4:5 frame crops
+ * a fifth off a landscape room shot and the product itself leaves the frame — you get a
+ * corner of a bed and no idea what is for sale. Contain letterboxes a square photo by
+ * ~10% top and bottom, identically every time, which reads as a mat rather than a bug.
+ */
+.product-card.is-scene .product-card__img {
+	object-fit: contain;
+	padding: 0;
+	mix-blend-mode: normal;
+}
+
+.product-card.is-scene .product-card__tint {
+	/* Under an opaque photo the tint has nothing to tint; it becomes the hover veil. */
+	z-index: 2;
+	mix-blend-mode: multiply;
+	pointer-events: none;
+}
+
+.product-card__img--hover {
+	opacity: 0;
+}
+
+/* ---- M10: hover ---------------------------------------------------------- */
+/*
+ * Where there is no second image the ground changes, not the image: the product reads
+ * as having been moved onto coloured stock. Honest, cheaper than an image swap, and it
+ * reinforces the collection accent. `.has-hover` opts in to the crossfade.
+ */
+
+[data-motion='full'] .product-card__tint {
+	transition: opacity 160ms var(--ease-out);
+}
+
+[data-motion='full'] .product-card__img {
+	transition: transform 240ms var(--ease-out);
+}
+
+[data-motion='full'] .product-card__img--hover {
+	transition: opacity 240ms var(--ease-out);
+}
+
+[data-motion='full'] .product-card:hover .product-card__img,
+[data-motion='full'] .product-card:focus-within .product-card__img {
+	transform: scale(1.03);
+}
+
+.product-card:hover .product-card__tint,
+.product-card:focus-within .product-card__tint {
+	opacity: 1;
+}
+
+/* A full-strength veil over a photograph is a colour cast, not a hover state. */
+.product-card.is-scene:hover .product-card__tint,
+.product-card.is-scene:focus-within .product-card__tint {
+	opacity: 0.5;
+}
+
+.has-hover:hover .product-card__img--hover,
+.has-hover:focus-within .product-card__img--hover {
+	opacity: 1;
+}
+
+[data-motion='reduced'] .product-card__tint {
+	transition: opacity var(--dur-1) linear;
+}
+
+[data-motion='reduced'] .product-card:hover .product-card__img {
+	transform: none;
+}
+
+/* ---- Badge --------------------------------------------------------------- */
+
+.badge {
+	position: absolute;
+	inset-block-start: var(--s3);
+	inset-inline-start: var(--s3);
+	z-index: 3;
+	padding: 3px var(--s3);
+	border-radius: var(--r-pill);
+	border: 1px solid var(--acc);
+	color: var(--acc-deep);
+	background: var(--cream-050);
+	font-size: var(--fs-xs);
+	font-weight: 600;
+	line-height: 1.6;
+}
+
+.badge--sale {
+	border-color: var(--sale-500);
+	color: var(--sale-500);
+}
+
+.badge--oos {
+	border-color: var(--ink-600);
+	color: var(--ink-600);
+}
+
+/* ---- Favourite ----------------------------------------------------------- */
+/* Never moves; only its opacity changes. */
+
+.product-card__fav {
+	position: absolute;
+	inset-block-start: var(--s3);
+	inset-inline-end: var(--s3);
+	z-index: 3;
+	display: grid;
+	place-items: center;
+	inline-size: 34px;
+	block-size: 34px;
+	border: var(--rule);
+	border-radius: var(--r-pill);
+	background: var(--cream-050);
+	color: var(--ink-900);
+	opacity: 0.5;
+	transition: opacity var(--dur-1) var(--ease-out);
+}
+
+.product-card__fav:hover,
+.product-card__fav:focus-visible,
+.product-card:hover .product-card__fav {
+	opacity: 1;
+}
+
+.product-card__fav[aria-pressed='true'] {
+	opacity: 1;
+	color: var(--sale-500);
+}
+
+.product-card__fav[aria-pressed='true'] svg {
+	fill: currentColor;
+}
+
+/* ---- Quick action -------------------------------------------------------- */
+
+.product-card__quick {
+	position: absolute;
+	inset-inline: var(--s3);
+	inset-block-end: var(--s3);
+	z-index: 3;
+}
+
+.btn--quick {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 100%;
+	min-block-size: 44px;
+	padding-inline: var(--s4);
+	background: var(--cream-050);
+	border-color: var(--ink-900);
+	font-size: var(--fs-sm);
+	text-decoration: none;
+	position: relative;
+	overflow: hidden;
+}
+
+[data-motion='full'] .product-card__quick {
+	opacity: 0;
+	transform: translateY(8px);
+	transition:
+		opacity 200ms var(--ease-out),
+		transform 200ms var(--ease-out);
+}
+
+[data-motion='full'] .product-card:hover .product-card__quick,
+[data-motion='full'] .product-card:focus-within .product-card__quick {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+[data-motion='reduced'] .product-card__quick {
+	opacity: 0;
+	transition: opacity var(--dur-1) linear;
+}
+
+[data-motion='reduced'] .product-card:hover .product-card__quick,
+[data-motion='reduced'] .product-card:focus-within .product-card__quick {
+	opacity: 1;
+}
+
+/*
+ * No hover, no reveal: the button is simply always there. Hover is not a route to
+ * purchase on touch, and hiding it behind one would remove the action entirely.
+ */
+@media (hover: none) {
+	.product-card__quick {
+		opacity: 1 !important;
+		transform: none !important;
+	}
+}
+
+/* ---- M12: add-to-cart confirmation --------------------------------------- */
+/*
+ * The label flips in place. No flying product image: our plates use mix-blend-mode,
+ * and a fixed-position clone creates a new stacking context that blends against the
+ * wrong backdrop — the product would change colour mid-flight or vanish over the dark
+ * section. The in-place flip also confirms where the eye already is.
+ */
+
+.btn__done {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	transform: translateY(100%);
+	background: var(--acc);
+	color: var(--acc-on);
+}
+
+[data-motion='full'] .btn__label,
+[data-motion='full'] .btn__done {
+	transition: transform var(--dur-2) var(--ease-out);
+}
+
+.is-added .btn__label {
+	transform: translateY(-100%);
+}
+
+.is-added .btn__done {
+	transform: translateY(0);
+}
+
+/* ---- Body ---------------------------------------------------------------- */
+
+.product-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s2);
+	padding-block-start: var(--s3);
+	border-block-start: var(--rule);
+}
+
+.product-card__name {
+	font-size: var(--fs-md);
+	line-height: 1.3;
+	font-weight: 400;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.product-card__name a {
+	text-decoration: none;
+}
+
+.product-card__name a:hover {
+	color: var(--acc);
+}
+
+.product-card__price {
+	font-weight: 600;
+	font-size: var(--fs-base);
+}
+
+.product-card__price del {
+	color: var(--ink-600);
+	font-weight: 400;
+	margin-inline-end: var(--s2);
+	opacity: 0.7;
+}
+
+.product-card__price ins {
+	text-decoration: none;
+	color: var(--sale-500);
+}
+
+.product-card__spec {
+	color: var(--brown-500);
+}
+
+/* Estimated dimensions are marked, always. These are someone else's real products —
+   an inferred number must never read as a measured one. */
+.is-estimated {
+	border-block-end: 1px dotted var(--brown-500);
+	cursor: help;
+}
+
+/* ---- Swatches ------------------------------------------------------------ */
+
+.swatches {
+	display: flex;
+	align-items: center;
+	gap: var(--s2);
+	flex-wrap: wrap;
+	margin: 0;
+}
+
+.swatch {
+	display: block;
+	inline-size: 14px;
+	block-size: 14px;
+	border-radius: var(--r-pill);
+	background: var(--swatch);
+	border: 1px solid rgb(25 21 18 / 0.2);
+}
+
+/* Unmapped colour name: a text chip, never a guessed dot. */
+.swatch--text {
+	font-size: var(--fs-xs);
+	color: var(--ink-600);
+	border: var(--rule);
+	border-radius: var(--r-pill);
+	padding: 1px var(--s2);
+}
+
+.swatch--more {
+	color: var(--brown-500);
+}
