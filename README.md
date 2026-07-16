@@ -17,6 +17,44 @@ real products, implementing the brief in `הערת ה צ'אט.txt`.
 
 ---
 
+---
+
+![Hero](docs/shots/01-hero.jpg)
+
+*Their own photograph, their own products. Nothing here is a mockup — every screenshot is
+the running site.*
+
+---
+
+## Shop the Space
+
+The feature the brief called the differentiator: a styled space where hotspots reveal on
+scroll, and clicking one opens a card wired straight to the cart.
+
+| | |
+|---|---|
+| ![Shop the Space](docs/shots/03-shop-the-space.jpg) | ![Card open](docs/shots/04-shop-the-space-open.jpg) |
+
+The room is **an illustration, not a photograph** — and deliberately so. HR Design has no
+lifestyle photography of a living room, and their studio cut-outs turned out to be
+bathroom fittings and lighting; the one sofa shot on white is pale, and `multiply` erases
+it entirely. So the scene does not pretend. It is five real product cut-outs on flat drawn
+planes, in the same plate language the rest of the site speaks. **Every hotspot points at a
+product they actually sell.**
+
+On mobile the pins become a legend and the strip becomes the control — a separate portrait
+composition, not a crop. Tapping a 20px dot your own thumb is covering is not an
+interaction.
+
+| Catalogue | Product page | Shop the Space |
+|---|---|---|
+| ![Catalogue](docs/shots/12-catalogue-mobile.jpg) | ![Product](docs/shots/14-product-mobile.jpg) | ![Mobile STS](docs/shots/13-shop-the-space-mobile.jpg) |
+
+All 14 shots, desktop and mobile, are in [`docs/shots/`](docs/shots/) —
+see [`tools/shots/README.md`](tools/shots/README.md) for what each one is for.
+
+---
+
 ## The direction
 
 The brief's diagnosis: *"the site works as a shop but doesn't tell a story."* And its
@@ -95,12 +133,17 @@ docker run --rm -v "D:\משה פרוייקטים\HR_DESIGN-SITE:/x" alpine ls /x
 | `tools/scene/` | The Shop the Space composer |
 | `tools/audit/` | Contrast and bidi audits — see `tools/audit/README.md` |
 | `tools/dev-probes/` | In-page diagnostics, loaded as a mu-plugin, never as theme code |
-| `tools/shots/` | Pitch screenshots — see `tools/shots/README.md` |
+| `tools/shots/` | The capture script — see `tools/shots/README.md` |
+| `docs/shots/` | The 14 pitch screenshots |
 
 **`seed/` is not in this repository, deliberately.** It holds 409 of HR Design's product
-photographs, their catalogue text, and scene SVGs with their photography embedded. This
-repo is public and none of that content is ours. `node tools/seed/fetch.mjs` reproduces
-all of it, so nothing is lost.
+photographs, their catalogue text, and scene SVGs with their photography embedded as
+base64. This repo is public and none of that content is ours. `node tools/seed/fetch.mjs`
+reproduces all of it, so nothing is lost.
+
+The screenshots in `docs/shots/` are the exception, and a considered one: they are the
+pitch itself, and they show HR Design their own catalogue in a proposed design. That is
+the point of sending them. Wholesale republication of the catalogue is not.
 
 ---
 

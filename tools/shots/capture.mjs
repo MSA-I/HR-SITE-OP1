@@ -20,7 +20,11 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const OUT = join(ROOT, 'seed', 'shots');
+
+// docs/, not seed/ — these are the deliverable, and seed/ is excluded from the repo
+// because it holds HR Design's own photography and catalogue. Writing here keeps the
+// committed shots and the capture script from drifting apart.
+const OUT = join(ROOT, 'docs', 'shots');
 const BASE = 'http://localhost:8080';
 const CDP = 'http://127.0.0.1:9222';
 
