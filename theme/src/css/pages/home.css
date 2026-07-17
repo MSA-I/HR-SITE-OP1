@@ -196,6 +196,13 @@
 .collection {
 	position: relative;
 	padding-inline: 0;
+	/*
+	 * Lifts the track's timeline somewhere its SIBLING rail can name it. Without this the
+	 * rail's only option is scroll(nearest inline), which walks up from the rail, finds no
+	 * inline scroll container above it — the track is beside it, not around it — and
+	 * resolves to a timeline that never ticks.
+	 */
+	timeline-scope: --collection-track;
 }
 
 .collection__rail {
@@ -211,14 +218,64 @@
 	padding-inline: var(--page-margin);
 	overflow-x: auto;
 	overflow-y: hidden;
-	/* PROXIMITY, not mandatory: mandatory fights the user's finger. */
-	scroll-snap-type: inline proximity;
+	/*
+	 * NO scroll-snap. It was `inline proximity`, and the client reported the strip
+	 * "jumping" when he scrolled it sideways. Reproduced with a real wheel event:
+	 * scrollLeft went 0 -> 1 -> 0, i.e. it moved and got yanked straight back.
+	 *
+	 * Proximity was chosen over mandatory because "mandatory fights the user's finger".
+	 * The measurement says proximity fights it too, and the reason is this strip's own
+	 * shape: the frames are deliberately unequal (634, 320 x5, 432), so the snap points
+	 * sit at irregular intervals and the engine re-evaluates the nearest one mid-scroll.
+	 * `.is-dragging` already disabled snap for pointer drags, which is exactly why this
+	 * only ever bit wheel and trackpad users.
+	 *
+	 * Nothing is lost: the arrows scroll to measured frame positions programmatically and
+	 * never depended on CSS snap, and `scroll-snap-align` on the frames is now inert.
+	 */
+	/*
+	 * Kept, and still load-bearing without snap: it insets scrollIntoView and the arrows'
+	 * landing positions by the same margin the padding draws, so the title frame cannot
+	 * park flush against the viewport edge and swallow the page margin. That is what was
+	 * clipping "תאורה" and its button.
+	 */
+	scroll-padding-inline: var(--page-margin);
 	scrollbar-width: none;
+	/* Published under a name so the rail below, a sibling, can animate off it. */
+	scroll-timeline: --collection-track inline;
 }
 
 .collection__track::-webkit-scrollbar {
 	display: none;
 }
+
+/* The scrollbar is hidden by design, so on a mouse the drag IS the affordance. */
+@media (hover: hover) and (pointer: fine) {
+	.collection__track {
+		cursor: grab;
+	}
+
+	.collection__track.is-dragging {
+		cursor: grabbing;
+	}
+}
+
+.collection__track.is-dragging {
+	/*
+	 * Snap re-lands the track on a snap point after every scrollLeft write, which fights
+	 * the drag frame by frame. Off for the duration, restored on pointerup, so the track
+	 * snaps exactly once — at the end, where it is wanted.
+	 */
+	scroll-snap-type: none;
+	/* A drag should move the track, not select the product names it crosses. */
+	user-select: none;
+}
+
+/*
+ * The native link/image drag is killed in JS, on dragstart, not here: the draggable
+ * element is the <a>, and -webkit-user-drag is WebKit-only. It was tried on the images
+ * first and measurably did nothing.
+ */
 
 .collection__frame {
 	scroll-snap-align: start;
@@ -308,10 +365,61 @@
 	text-decoration: none;
 }
 
+/* The rail and the arrows share one line: both are the same statement about position. */
+.collection__foot {
+	display: flex;
+	align-items: center;
+	gap: var(--s5);
+	margin: var(--s6) var(--page-margin) 0;
+}
+
 .collection__progress {
 	block-size: 1px;
 	background: var(--cream-200);
-	margin: var(--s6) var(--page-margin) 0;
+	flex: 1;
+}
+
+.collection__nav {
+	display: flex;
+	gap: var(--s2);
+	flex: none;
+}
+
+/* The class sets display, so the attribute needs saying out loud to still mean anything. */
+.collection__nav[hidden] {
+	display: none;
+}
+
+.collection__nav-btn {
+	display: grid;
+	place-items: center;
+	inline-size: 44px;
+	block-size: 44px;
+	padding: 0;
+	background: transparent;
+	border: 1px solid var(--cream-200);
+	border-radius: var(--r-1);
+	color: var(--ink-900);
+	cursor: pointer;
+}
+
+.collection__nav-btn:hover:not(:disabled) {
+	border-color: var(--ink-900);
+}
+
+.collection__nav-btn:disabled {
+	opacity: 0.3;
+	cursor: default;
+}
+
+/*
+ * "Back" is "next" mirrored, in either direction — so it needs no second icon and no
+ * dir-specific rule. The icon already points the document's way forward (icons.php
+ * authors `arrow` rightward; RTL flips it), and flipping the button once more turns that
+ * around. Safe to do to the whole box: it is a square holding one glyph.
+ */
+.collection__nav-btn--prev {
+	transform: scaleX(-1);
 }
 
 .collection__progress-fill {
@@ -323,10 +431,15 @@
 	transform-origin: right;
 }
 
-@supports (animation-timeline: scroll(nearest inline)) {
+/*
+ * Named timeline, not scroll(nearest inline): see .collection's timeline-scope. The gate
+ * must stay in step with the one in js/modules/collection.js, which skips its fallback on
+ * exactly these two features.
+ */
+@supports (timeline-scope: --x) and (animation-timeline: --x) {
 	.collection__progress-fill {
 		animation: collection-progress linear both;
-		animation-timeline: scroll(nearest inline);
+		animation-timeline: --collection-track;
 	}
 }
 
@@ -350,9 +463,11 @@
 
 /* ---- 06 Portals ---------------------------------------------------------- */
 
+/* Five rooms in one row. They stay one row on purpose: a portal promoted to hero size
+   would need a source the catalogue does not have — the beds top out at 630w. */
 .portals {
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(5, 1fr);
 	gap: var(--gutter);
 	margin: 0;
 }
@@ -360,6 +475,16 @@
 @media (max-width: 900px) {
 	.portals {
 		grid-template-columns: repeat(2, 1fr);
+	}
+
+	/* Five rooms into two columns leaves one orphan on the last row. Centre it at its
+	   siblings' width: left to itself it hangs at the edge with a column-wide hole
+	   beside it, which reads as a missing sixth room. Not a span — a portal blown up to
+	   full width would need a source the catalogue does not have. */
+	.portals > li:last-child:nth-child(odd) {
+		grid-column: 1 / -1;
+		inline-size: calc(50% - var(--gutter) / 2);
+		justify-self: center;
 	}
 }
 

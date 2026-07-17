@@ -6,9 +6,12 @@
  * columns 2-12. Every section starts at the same inline offset, and that consistency
  * is exactly what licenses the sections that break it.
  *
- * Everything here uses logical properties. There is no rtl.css and no build-time flip:
- * the site is Hebrew-only, so it is authored natively RTL. The two documented
- * exceptions live in components/hotspot.css.
+ * Everything here uses logical properties. There is no rtl.css and no build-time flip: the
+ * site is Hebrew-only, so it is authored natively RTL. The one documented exception lives in
+ * components/by-light.css — `.byl__tag` is positioned with physical `right`, because it
+ * marks the lamp in a photograph and a photograph does not mirror when the text does. That
+ * exception used to be a whole `direction: ltr` stage; it shrank to one property when the
+ * section stopped computing with coordinates.
  */
 
 .grid {

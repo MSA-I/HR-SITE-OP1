@@ -1,0 +1,422 @@
+/*
+ * By Light.
+ *
+ * The section stays on ground--ink, and now that is argued rather than asserted: at 07:00 a
+ * bright photograph on a near-black page is a window in a dark wall, and at 23:00 the
+ * photograph and the page are the SAME darkness, so the only light left on the screen is
+ * the lamp you can buy.
+ *
+ * The light is IN the images. An earlier version graded one photograph live with a filter
+ * chain plus a ten-layer overlay rig; it was replaced because CSS filter is a GLOBAL
+ * transform with no spatial information, so the rig was hand-placing gradients to imitate
+ * light it could not compute. These frames were relit by a model that actually lights the
+ * room — real falloff, real bounce, shadows that agree with the geometry — so the whole
+ * mechanism here reduces to cross-fading opacity between four <img>. That is why this file
+ * is short: the hard part moved into the assets.
+ */
+
+.byl {
+	position: relative;
+	padding-block: var(--section-pad);
+	overflow: hidden;
+
+	/*
+	 * Every transition below is scoped to [data-motion='full'], which is the theme's own
+	 * gate (motion.css) and the one that also survives JS being disabled. So reduced motion
+	 * gets no transition at all and every change is a CUT — no override needed here.
+	 *
+	 * There WAS a `[data-motion='reduced'] .byl { --byl-dur: 1ms }` rule. It was dead: the
+	 * only declarations reading --byl-dur live inside [data-motion='full'] blocks, so under
+	 * reduced it was never read. A dead rule that looks load-bearing is worse than no rule.
+	 *
+	 * Cutting rather than dissolving is an honest mode, not a lesser one: 100% of the
+	 * information survives — the user still walks the room from morning to night — and only
+	 * the involuntary movement goes.
+	 */
+	--byl-dur: 900ms;
+}
+
+.byl__head {
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-margin);
+	margin-block-end: var(--s7);
+}
+
+/*
+ * NOT .t-mono, and that was a real bug rather than a preference.
+ *
+ * .t-mono is --ff-mono (IBM Plex Mono) plus letter-spacing: 0.08em. The theme ships exactly
+ * one Plex file — plex-mono-400-latin.woff2 — and its unicode-range is Latin. There is no
+ * Hebrew in it. So this Hebrew eyebrow was never in Plex: it fell through to ui-monospace,
+ * whatever mono the OS happened to have, which is precisely what a self-hosted type system
+ * exists to prevent. It also carried 0.88px of tracking, and Hebrew has no letter case to
+ * justify tracking — it only damages word-shape.
+ *
+ * The time labels KEEP .t-mono, because "07:00" is Latin digits and Plex genuinely renders
+ * them. The distinction is the font's coverage, not the class.
+ */
+.byl__eyebrow {
+	font-family: var(--ff-body);
+	font-size: var(--fs-xs);
+	color: var(--acc);
+	margin-block-end: var(--s3);
+}
+
+.byl__title {
+	color: var(--cream-050);
+}
+
+/* ---- Layout --------------------------------------------------------------- */
+/*
+ * The photographs keep their own square ratio, uncropped, at 62% of the width. That is not
+ * laziness — it kills the dual coordinate system. The section this replaced needed a whole
+ * re-composition pipeline and a second set of coordinates because a 16:9 stage cropped to
+ * 4:5 "sliced the room into an unreadable strip". Square assets mean no crop and no
+ * separate mobile composition.
+ */
+
+.byl__grid {
+	max-inline-size: var(--max-width);
+	margin-inline: auto;
+	padding-inline: var(--page-margin);
+	display: grid;
+	grid-template-columns: 62fr 38fr;
+	gap: var(--s6);
+	align-items: center;
+}
+
+@media (max-width: 860px) {
+	.byl__grid {
+		grid-template-columns: 1fr;
+		gap: var(--s5);
+	}
+}
+
+.byl__col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--s5);
+	min-inline-size: 0;
+}
+
+/* ---- Stage ---------------------------------------------------------------- */
+
+.byl__stage {
+	position: relative;
+	aspect-ratio: 1;
+	overflow: hidden;
+
+	/* The frames stack and the ground shows through only mid-dissolve. Ink rather than
+	   nothing, so a cross-fade never flashes the page background at a different value. */
+	background: var(--ink-900);
+}
+
+.byl__frame {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: cover;
+	opacity: 0;
+	pointer-events: none;
+}
+
+[data-motion='full'] .byl__frame {
+	transition: opacity var(--byl-dur) var(--ease-inout);
+}
+
+/*
+ * The no-:has() floor and the no-JS floor, in one rule: 07:00 is visible until something
+ * says otherwise. A browser that cannot match :has() shows a still room rather than an
+ * empty box — the one degradation this section is not allowed to have.
+ */
+.byl__frame[data-stop='07'] {
+	opacity: 1;
+}
+
+/* ---- The price chip ------------------------------------------------------- */
+/*
+ * `right`, PHYSICALLY, and this is the one place in the stylesheet that earns a physical
+ * property.
+ *
+ * The chip marks the lamp, and the lamp is a point in a photograph — it does not move when
+ * the text direction does. This was authored as inset-inline-end and it put the chip on the
+ * far side of the room, because the section inherits RTL and the logical end is the left.
+ * The old version of this section quarantined the problem with `direction: ltr` on the
+ * stage; there is only one coordinate left now, so one physical property is the smaller
+ * answer. Do not "modernise" this to a logical property.
+ *
+ * The lamp sits around x=79%, belly y=40% in all four renders. That is a fact about the
+ * images, so it is one hard-coded position and nothing derives from it.
+ */
+.byl__tag {
+	position: absolute;
+	top: 52%;
+	right: 13%;
+	inline-size: max-content;
+	padding: 3px var(--s2);
+	background: rgb(250 246 239 / 0.94);
+	color: var(--ink-900);
+	font-size: var(--fs-xs);
+	border-radius: var(--r-1);
+	opacity: 0;
+	pointer-events: none;
+}
+
+[data-motion='full'] .byl__tag {
+	transition: opacity var(--byl-dur) var(--ease-inout);
+}
+
+/* ---- The control ---------------------------------------------------------- */
+/*
+ * DOM order 07 -> 23 in an RTL flex row lays out right to left on its own: 07:00 at the
+ * right, 23:00 at the left. A timeline in Hebrew reading order, with no direction branch
+ * and no coordinate maths.
+ */
+
+.byl__times {
+	display: flex;
+	gap: var(--s1);
+	border: 0;
+	padding: 0;
+	margin: 0;
+	position: relative;
+}
+
+/* The rail the stops sit on. */
+.byl__times::before {
+	content: '';
+	position: absolute;
+	inset-inline: 0;
+	inset-block-end: 0;
+	block-size: 1px;
+	background: rgb(250 246 239 / 0.18);
+}
+
+.byl__time {
+	flex: 1;
+	padding-block: var(--s2);
+	text-align: center;
+	color: rgb(250 246 239 / 0.5);
+	cursor: pointer;
+	position: relative;
+	min-block-size: 44px;
+	display: grid;
+	place-items: center;
+	border-block-end: 1px solid transparent;
+}
+
+[data-motion='full'] .byl__time {
+	transition:
+		color var(--dur-2) var(--ease-out),
+		border-color var(--dur-2) var(--ease-out);
+}
+
+.byl__time:hover {
+	color: rgb(250 246 239 / 0.8);
+}
+
+.byl__radio:checked + .byl__time {
+	color: var(--cream-050);
+	border-block-end-color: var(--acc);
+}
+
+/* The radio is visually-hidden, so the focus ring has to be put back by hand — on the
+   label, which is what the user actually sees. Without this a keyboard user is moving
+   through the stops completely blind. */
+.byl__radio:focus-visible + .byl__time {
+	outline: 2px solid var(--acc);
+	outline-offset: 2px;
+}
+
+/* ---- The copy ------------------------------------------------------------- */
+
+.byl__copy {
+	position: relative;
+	min-block-size: 4.5em;
+}
+
+.byl__line {
+	margin: 0;
+	color: rgb(250 246 239 / 0.72);
+	font-size: var(--fs-md);
+	line-height: var(--lh-body);
+	text-wrap: pretty;
+
+	/* visibility, not opacity alone: three stale sentences left in the accessibility tree
+	   is a screen reader reading the whole day out at once. */
+	visibility: hidden;
+	opacity: 0;
+}
+
+.byl__line:not(:first-child) {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+}
+
+.byl__line[data-stop='07'] {
+	visibility: visible;
+	opacity: 1;
+}
+
+[data-motion='full'] .byl__line {
+	transition:
+		opacity var(--byl-dur) var(--ease-inout),
+		visibility var(--byl-dur);
+}
+
+/* ---- The state machine ---------------------------------------------------- */
+/*
+ * The entire feature, in CSS. :has() reads the checked radio and swaps which frame is
+ * visible, which line is announced, and whether the chip is lit. This is the codebase's own
+ * instinct — collection.js:13, "where CSS can, let it" — taken to its conclusion: the
+ * section has no JavaScript at all.
+ */
+
+.byl:has(#byl-t-12:checked) .byl__frame[data-stop='07'],
+.byl:has(#byl-t-18:checked) .byl__frame[data-stop='07'],
+.byl:has(#byl-t-23:checked) .byl__frame[data-stop='07'] {
+	opacity: 0;
+}
+
+.byl:has(#byl-t-12:checked) .byl__frame[data-stop='12'],
+.byl:has(#byl-t-18:checked) .byl__frame[data-stop='18'],
+.byl:has(#byl-t-23:checked) .byl__frame[data-stop='23'] {
+	opacity: 1;
+}
+
+.byl:has(#byl-t-12:checked) .byl__line[data-stop='07'],
+.byl:has(#byl-t-18:checked) .byl__line[data-stop='07'],
+.byl:has(#byl-t-23:checked) .byl__line[data-stop='07'] {
+	visibility: hidden;
+	opacity: 0;
+}
+
+.byl:has(#byl-t-12:checked) .byl__line[data-stop='12'],
+.byl:has(#byl-t-18:checked) .byl__line[data-stop='18'],
+.byl:has(#byl-t-23:checked) .byl__line[data-stop='23'] {
+	visibility: visible;
+	opacity: 1;
+}
+
+/* The chip belongs to night, because that is the only hour the lamp is the point. */
+.byl:has(#byl-t-23:checked) .byl__tag {
+	opacity: 1;
+}
+
+/* ---- The inline mini card ------------------------------------------------- */
+/*
+ * These styles moved here wholesale when components/hotspot.css was deleted. The card is
+ * inline in the column now instead of a popover: it is permanent, so there is no open
+ * state, no anchoring, and no bottom sheet.
+ */
+
+.mini-card {
+	padding: var(--s4);
+	background: var(--cream-050);
+	border: 1px solid rgb(25 21 18 / 0.12);
+	border-radius: var(--r-1);
+	display: flex;
+	flex-direction: column;
+	gap: var(--s3);
+
+	/*
+	 * Load-bearing, and it was NOT needed while this was a popover.
+	 *
+	 * A popover renders in the top layer and inherited nothing from the section around it.
+	 * Inline inside .ground--ink it inherits cream — cream text on a cream card. The name
+	 * and the price were the only two elements here without an explicit colour, so they
+	 * were the only two that vanished, which is exactly the kind of bug that survives a
+	 * screenshot because the card still looks like a card.
+	 */
+	color: var(--ink-900);
+}
+
+.mini-card__body {
+	display: flex;
+	gap: var(--s3);
+	align-items: flex-start;
+}
+
+.mini-card__plate {
+	flex: none;
+	inline-size: 88px;
+	block-size: 88px;
+	display: grid;
+	place-items: center;
+	background: var(--acc-tint);
+	overflow: hidden;
+	/* aria-hidden in markup, so it must not be reachable by pointer either — the name link
+	   beside it is the real target. */
+	pointer-events: none;
+}
+
+.mini-card__plate img {
+	inline-size: 100%;
+	block-size: 100%;
+}
+
+/* The same measured branch as the card and the PDP: hrd_photo_type() decides by
+   measurement, and a studio cut-out multiplies onto the plate while a room shot covers. */
+.mini-card__plate.is-studio img {
+	object-fit: contain;
+	padding: 10%;
+	mix-blend-mode: multiply;
+}
+
+.mini-card__plate.is-scene img {
+	object-fit: cover;
+}
+
+.mini-card__text {
+	min-inline-size: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--s1);
+}
+
+.mini-card__name {
+	font-size: var(--fs-md);
+	font-weight: 400;
+	line-height: 1.25;
+}
+
+.mini-card__name a {
+	text-decoration: none;
+}
+
+.mini-card__price {
+	font-weight: 600;
+}
+
+.mini-card__spec {
+	color: var(--brown-500);
+}
+
+.mini-card__cta {
+	inline-size: 100%;
+	min-block-size: 44px;
+	display: grid;
+	place-items: center;
+	text-decoration: none;
+	position: relative;
+	overflow: hidden;
+}
+
+.mini-card__link {
+	font-size: var(--fs-xs);
+	color: var(--ink-600);
+	text-decoration: none;
+	/* inline-flex, or the icon wraps onto its own line under the label — hrd_icon() emits a
+	   block-ish <svg>, where the old literal ← was just another character. */
+	display: inline-flex;
+	align-items: center;
+	gap: var(--s1);
+	align-self: flex-start;
+}
+
+.mini-card__link:hover {
+	color: var(--acc);
+}

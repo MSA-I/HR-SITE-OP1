@@ -49,7 +49,7 @@ add_action(
 	function () {
 		global $product;
 
-		$number = get_option( 'hrd_whatsapp', '972587960660' );
+		$number = hrd_brand()['whatsapp'];
 		if ( ! $number ) {
 			return;
 		}

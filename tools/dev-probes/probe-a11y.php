@@ -87,21 +87,38 @@ add_action(
 			}
 
 			/*
-			 * offsetWidth, not getBoundingClientRect: the rect includes transforms, and
-			 * a hotspot mid-reveal is scaled to 0.4, so the rect reports 18px for a
-			 * target that is 44px at rest. Worse, a background tab freezes transitions
-			 * part-way, so the rect reports whatever frame it stopped on. The layout box
-			 * is the honest measure of a hit area.
+			 * offsetWidth, not getBoundingClientRect: the rect includes transforms, so an
+			 * element mid-reveal reports whatever scale it is caught at rather than its
+			 * real hit area. Worse, a background tab freezes transitions part-way, so the
+			 * rect reports whatever frame it stopped on. The layout box is the honest
+			 * measure.
 			 */
-			for (const el of document.querySelectorAll('.hotspot, .product-card__fav, .btn, .site-nav__link, .filter-chip, .tab, .motion-toggle')) {
+			for (const el of document.querySelectorAll('.byl__time, .product-card__fav, .btn, .site-nav__link, .filter-chip, .tab, .motion-toggle')) {
 				if (!el.offsetWidth && !el.offsetHeight) continue; // not rendered here
 				if (el.offsetHeight < 34 || el.offsetWidth < 34) fail('touch-target', el.offsetWidth + 'x' + el.offsetHeight, el);
 			}
 
-			for (const spot of document.querySelectorAll('.hotspot')) {
-				if (spot.tagName !== 'BUTTON') fail('hotspot-not-button', spot.tagName, spot);
-				if (spot.tabIndex < 0) fail('hotspot-not-focusable', spot.tabIndex, spot);
-				if (!spot.getAttribute('aria-label')) fail('hotspot-no-label', '', spot);
+			/*
+			 * לפי אור's control. This replaced the hotspot checks, which went with Shop the
+			 * Space — they were still here, still matching nothing, and still reporting a
+			 * clean pass on every run. A check that matches zero elements is not passing,
+			 * it is absent, and it looks identical in the output.
+			 *
+			 * The control is a native radio group, so focusability and arrow navigation
+			 * come free and the <label> supplies the name. What can actually break is the
+			 * focus ring: the radio is visually-hidden, so the ring is hand-drawn on the
+			 * label, and losing it leaves a keyboard user driving the room blind.
+			 */
+			for (const stop of document.querySelectorAll('.byl__radio')) {
+				if (stop.tabIndex < 0) fail('byl-stop-not-focusable', stop.tabIndex, stop);
+				if (!document.querySelector('label[for="' + stop.id + '"]')) fail('byl-stop-no-label', stop.id, stop);
+				stop.focus();
+				const label = document.querySelector('label[for="' + stop.id + '"]');
+				const ring = label && getComputedStyle(label).outlineStyle;
+				if (stop.matches(':focus-visible') && (!ring || ring === 'none')) fail('byl-stop-no-focus-ring', stop.id, stop);
+			}
+			if (document.querySelector('.byl') && !document.querySelector('.byl__times legend')) {
+				fail('byl-group-unnamed', 'the fieldset has no legend');
 			}
 
 			const h1 = document.querySelectorAll('h1');

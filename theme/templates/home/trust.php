@@ -7,11 +7,26 @@
 
 defined( 'ABSPATH' ) || exit;
 
+/*
+ * Every number here is a promise the client has to honour, so each one tracks the real
+ * תקנון at https://hr-design.co.il/privacy-policy/ rather than the theme's defaults:
+ *
+ *   - 30 days, not 14, and the return is conditional — original packaging, original
+ *     invoice, customer pays return shipping, 5%/₪100 cancellation fee, and "הזמנה
+ *     מיוחדת" cannot be cancelled at all. "ללא שאלות" promised the opposite of the
+ *     terms, so the label points at them instead of overriding them.
+ *   - One year, and the תקנון gives it in the company's own name ("פגמים... אשר נגרמו
+ *     על ידי החברה"). Nothing there sources a manufacturer's warranty.
+ *   - Delivery days are the one figure the תקנון does not state. The number stays as the
+ *     theme default; do not sharpen it into a promise without a source.
+ *   - There is a showroom address, but no published hours and no "בתיאום מראש" anywhere,
+ *     so the claim is just the room.
+ */
 $items = array(
-	array( 'num' => '14', 'unit' => __( 'יום', 'hrdesign' ), 'label' => __( 'החזרה ללא שאלות', 'hrdesign' ) ),
-	array( 'num' => '7—14', 'unit' => __( 'ימים', 'hrdesign' ), 'label' => __( 'אספקה לכל הארץ', 'hrdesign' ) ),
-	array( 'num' => '2', 'unit' => __( 'שנים', 'hrdesign' ), 'label' => __( 'אחריות יצרן', 'hrdesign' ) ),
-	array( 'num' => '1', 'unit' => __( 'אולם', 'hrdesign' ), 'label' => __( 'תצוגה — בתיאום מראש', 'hrdesign' ) ),
+	array( 'num' => '30', 'unit' => __( 'יום', 'hrdesign' ), 'label' => __( 'החזרה בתנאי התקנון', 'hrdesign' ) ),
+	array( 'num' => '7-14', 'unit' => __( 'ימים', 'hrdesign' ), 'label' => __( 'אספקה לכל הארץ', 'hrdesign' ) ),
+	array( 'num' => '1', 'unit' => __( 'שנה', 'hrdesign' ), 'label' => __( 'אחריות החברה', 'hrdesign' ) ),
+	array( 'num' => '1', 'unit' => __( 'אולם', 'hrdesign' ), 'label' => __( 'תצוגה', 'hrdesign' ) ),
 );
 ?>
 

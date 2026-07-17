@@ -23,7 +23,14 @@ const OUT_CSS = join(ROOT, 'theme', 'src', 'css', 'base', 'fonts.css');
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36';
 
 const FONTS = [
-	{ slug: 'karantina', css: 'family=Karantina:wght@300', subsets: ['hebrew', 'latin'] },
+	// 300 is the display weight. 400 is here for the migration that makes Karantina the
+	// whole site's voice at text sizes, where 300 is too fine to hold a 17px line.
+	//
+	// Not 700, and not 500. 500 is not published (the API 400s on it). 700 would change
+	// what `strong`/`em` do today: typography.css sets them to 600, CSS weight matching
+	// would snap that to a real 700, and the type system deliberately makes weight plus
+	// accent colour the emphasis mechanism rather than a bolder display face.
+	{ slug: 'karantina', css: 'family=Karantina:wght@300;400', subsets: ['hebrew', 'latin'] },
 	{ slug: 'assistant', css: 'family=Assistant:wght@400;600', subsets: ['hebrew', 'latin'] },
 	{ slug: 'frank-ruhl', css: 'family=Frank+Ruhl+Libre:wght@400', subsets: ['hebrew', 'latin'] },
 	// Mono never renders Hebrew — it is measurements only, so Latin is the whole job.

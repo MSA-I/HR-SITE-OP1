@@ -6,7 +6,7 @@ import { initViewTransitions } from './modules/view-transitions.js';
 import { initMegaMenu } from './modules/mega-menu.js';
 import { initCollection } from './modules/collection.js';
 import { initTabs } from './modules/tabs.js';
-import { initRoomScene } from './room-scene.js';
+import { initByLight } from './by-light.js';
 
 /*
  * No framework, no GSAP, no smooth-scroll library. IntersectionObserver + CSS +
@@ -22,7 +22,7 @@ initViewTransitions();
 initMegaMenu();
 initCollection();
 initTabs();
-initRoomScene();
+initByLight();
 
 observeReveal('.reveal');
 observeReveal('.stagger');

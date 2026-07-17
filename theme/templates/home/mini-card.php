@@ -5,21 +5,31 @@
  * Same multiply plate, same mono spec line, same rules. That consistency is what makes
  * the feature feel native rather than bolted on.
  *
- * No colour swatches: there are no variants, and lying inside the flagship feature of
- * the site is how you lose the argument.
+ * It is also why by-light.php renders through this file instead of hand-rolling a block.
+ * cart.js:90 finds the product name for its "added to cart" toast via
+ * closest('.product-card, .mini-card, .pdp, .buy-bar'). A bespoke block would quietly ship
+ * a toast with no product name in it — and that toast is the only confirmation of the add
+ * that a screen-reader user gets. It is a real accessibility regression that no manual
+ * test catches, because the cart still works. Rendering through this file means cart.js
+ * needs no knowledge of the section at all.
+ *
+ * The popover branch went with Shop the Space, and nothing else consumed it. The card is
+ * now inline and permanent — which is also what lets the CTA stay a real, operable control
+ * at every hour of the day instead of materialising at nightfall, where it would have been
+ * a textbook hidden-but-focusable bug.
  *
  * @package hrdesign
  *
- * @var array $args spot
+ * @var array $args product, variant
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$spot = $args['spot'];
-$product = $spot['product'];
+$product = $args['product'];
+$variant = $args['variant'] ?? 'inline';
 ?>
 
-<div class="mini-card" id="card-<?php echo esc_attr( $spot['id'] ); ?>" popover data-mini-card="<?php echo esc_attr( $spot['id'] ); ?>">
+<div class="mini-card mini-card--<?php echo esc_attr( $variant ); ?>">
 	<div class="mini-card__body">
 		<?php
 		/*
@@ -62,7 +72,18 @@ $product = $spot['product'];
 		<a class="btn btn--primary mini-card__cta" href="<?php echo esc_url( $product['permalink'] ); ?>">
 			<?php esc_html_e( 'בחר אפשרויות', 'hrdesign' ); ?>
 		</a>
-	<?php elseif ( $product['in_stock'] ) : ?>
+	<?php elseif ( ! empty( $product['purchasable'] ) && ! empty( $product['in_stock'] ) ) : ?>
+		<?php
+		/*
+		 * Both keys are read through empty() rather than directly, and that is the whole
+		 * point: a payload that omits either one degrades to the "לפרטים" link below.
+		 * Fail-closed is the only safe default — a missing key means we do not know the
+		 * product can be bought, and a link that should have been a quick-add is a much
+		 * lesser bug than a quick-add on something with no agreed price. Three products
+		 * in this catalogue are in stock and still not purchasable; see
+		 * hrd_is_price_on_request().
+		 */
+		?>
 		<button type="button" class="btn btn--primary mini-card__cta" data-add-to-cart="<?php echo esc_attr( $product['id'] ); ?>">
 			<span class="btn__label"><?php esc_html_e( 'הוספה לסל', 'hrdesign' ); ?></span>
 			<span class="btn__done" aria-hidden="true"><?php esc_html_e( 'נוסף לסל', 'hrdesign' ); ?></span>
@@ -73,8 +94,16 @@ $product = $spot['product'];
 		</a>
 	<?php endif; ?>
 
+	<?php
+	/*
+	 * Was a literal <span class="icon--directional">←</span>, which was a live bug: the
+	 * glyph already points left, and [dir='rtl'] .icon--directional applies scaleX(-1) on
+	 * top, so it rendered as → and pointed away from the link's own target. hrd_icon()
+	 * authors the arrow pointing right and lets the mirror make it correct.
+	 */
+	?>
 	<a class="mini-card__link" href="<?php echo esc_url( $product['permalink'] ); ?>">
 		<?php esc_html_e( 'לעמוד המוצר', 'hrdesign' ); ?>
-		<span class="icon--directional" aria-hidden="true">←</span>
+		<?php hrd_icon( 'arrow', array( 'size' => 16 ) ); ?>
 	</a>
 </div>

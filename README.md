@@ -6,9 +6,12 @@ brief, meant to be compared side by side.
 
 | | Direction | Repo |
 |---|---|---|
-| **1** | **Gallery Apartment** — this one | `HR-SITE-OP1` |
-| 2 | *to come* | *separate repo* |
-| 3 | *to come* | *separate repo* |
+| **1** | **Gallery Apartment** — this one. A custom theme, no framework, 4KB of JS. | [`HR-SITE-OP1`](https://github.com/MSA-I/HR-SITE-OP1) |
+| 2 | **Animation stack** — the same brief rebuilt full-RTL on a modern animation stack. | [`HR-SITE-OP2`](https://github.com/MSA-I/HR-SITE-OP2) |
+| 3 | **Space planner** — a harness for one question: how a 3D space-planner behaves inside the existing page shell. | [`HR-SITE-OP3`](https://github.com/MSA-I/HR-SITE-OP3) |
+
+Option 3 answers a narrower question than 1 and 2 — it is a feature preview against the
+current site rather than a whole redesign, so read it alongside them, not against them.
 
 A custom WordPress + WooCommerce theme (Hebrew, RTL) built against 250 of HR Design's
 real products, implementing the brief in `הערת ה צ'אט.txt`.
@@ -21,34 +24,60 @@ real products, implementing the brief in `הערת ה צ'אט.txt`.
 
 ![Hero](docs/shots/01-hero.jpg)
 
-*Their own photograph, their own products. Nothing here is a mockup — every screenshot is
-the running site.*
+*Their own photograph, their own products. Every screenshot in this README is the running
+site, not a mockup — including the four generated frames in לפי אור below, which are the
+one place the imagery is art-directed rather than documentary. That section says so itself.*
 
 ---
 
-## Shop the Space
+## לפי אור — the house from morning to night
 
-The feature the brief called the differentiator: a styled space where hotspots reveal on
-scroll, and clicking one opens a card wired straight to the cart.
+The differentiating feature. One living room at four hours, a control that walks its light
+from 07:00 to 23:00, and a real pendant from the catalogue that is dark at dawn and is the
+only light left at midnight — the only thing in frame still carrying colour, and the only
+thing for sale.
 
-| | |
+| 07:00 | 23:00 |
 |---|---|
-| ![Shop the Space](docs/shots/03-shop-the-space.jpg) | ![Card open](docs/shots/04-shop-the-space-open.jpg) |
+| ![Morning](docs/shots/03-by-light-morning.jpg) | ![Night](docs/shots/04-by-light-night.jpg) |
 
-The room is **an illustration, not a photograph** — and deliberately so. HR Design has no
-lifestyle photography of a living room, and their studio cut-outs turned out to be
-bathroom fittings and lighting; the one sofa shot on white is pale, and `multiply` erases
-it entirely. So the scene does not pretend. It is five real product cut-outs on flat drawn
-planes, in the same plate language the rest of the site speaks. **Every hotspot points at a
-product they actually sell.**
+**It sells the absence of light.** At 07:00 the section tells you that you do not need the
+lamp yet. It spends three of its four states saying so, and only asks for money at 23:00.
 
-On mobile the pins become a legend and the strip becomes the control — a separate portrait
-composition, not a crop. Tapping a 20px dot your own thumb is covering is not an
-interaction.
+**The four frames are generated depictions, and that is stated rather than implied.** The
+source is HR Design's real living room (product 5932) and their real pendant (6659 / AM933),
+fed to an image-to-image model. The furniture is recognisable and the lamp is genuinely
+theirs — but the model **re-rendered** the room at each hour rather than relighting their
+photograph pixel-for-pixel. These are art direction, not documentary photographs of their
+showroom. The exact prompts, and the chaining order that keeps the four frames from drifting, are in [`tools/by-light/`](tools/by-light/).
 
-| Catalogue | Product page | Shop the Space |
+**Why not grade one photograph in CSS?** That was built first and thrown away. `filter` is a
+*global* transform with no spatial information, so imitating light meant hand-placing
+gradients — a ten-layer rig faking a falloff it could not compute. A model that actually
+lights the room gives real falloff, real bounce, shadows that agree with the geometry, and a
+pierced brass shade that throws a genuine caustic pattern across the plaster. The section's
+whole mechanism collapsed to cross-fading `opacity` between four `<img>`, which is why
+`by-light.css` is short.
+
+**Consistency was the risk, and it was measured, not hoped.** Four independent generations
+would drift into four different rooms, and cross-fading between them reads as furniture
+morphing rather than as light changing. So night was generated from the source and the other
+three from the night render as a geometry anchor. Verified with a block-wise
+cross-correlation gate before shipping: **0px drift across the entire room**, and no object
+substituted — the five ginger jars are the same five jars in all four frames.
+
+**The control is four native radios and `:has()`. There is no JavaScript in the feature.**
+With JS disabled every stop still drives the whole section — proven, not asserted: with page
+script execution off, a real click on a label moves the stop, the photograph and the price
+chip. The only script is a ~35-line one-shot demo that plays the argument once, rests on
+night, and cancels on `pointerdown` / `keydown` / `focusin`. Under reduced motion it never
+runs and every change becomes a cut: all of the information, none of the movement.
+
+Square and uncropped means one set of images, no crop, and no separate mobile composition.
+
+| Catalogue | Product page | לפי אור |
 |---|---|---|
-| ![Catalogue](docs/shots/12-catalogue-mobile.jpg) | ![Product](docs/shots/14-product-mobile.jpg) | ![Mobile STS](docs/shots/13-shop-the-space-mobile.jpg) |
+| ![Catalogue](docs/shots/12-catalogue-mobile.jpg) | ![Product](docs/shots/14-product-mobile.jpg) | ![Mobile by light](docs/shots/13-by-light-mobile.jpg) |
 
 All 14 shots, desktop and mobile, are in [`docs/shots/`](docs/shots/) —
 see [`tools/shots/README.md`](tools/shots/README.md) for what each one is for.
@@ -104,9 +133,11 @@ docker compose exec wpcli wp eval-file /tools/seed/rank.php
 docker compose exec wpcli wp eval-file /tools/seed/classify-photos.php
 docker compose exec wpcli wp eval-file /tools/seed/import-estimates.php
 
-# Shop the Space
-node tools/scene/compose.mjs
-docker compose exec wpcli wp eval-file /tools/scene/install.php
+# לפי אור — the scene, then the four relit frames (WebP, srcset, ~34MB of PNG stays out of git)
+docker compose exec wpcli wp eval-file /tools/seed/by-light.php
+docker compose exec wpcli wp eval-file /tools/seed/install-bylight.php
+
+# The hero
 node tools/scene/fetch-hero.mjs
 docker compose exec wpcli wp eval-file /tools/scene/install-hero.php
 ```
@@ -130,7 +161,7 @@ docker run --rm -v "D:\משה פרוייקטים\HR_DESIGN-SITE:/x" alpine ls /x
 |---|---|
 | `theme/` | The theme |
 | `tools/seed/` | Store API seeder, importer, normaliser, and the analyses that reshaped the plan |
-| `tools/scene/` | The Shop the Space composer |
+| `tools/scene/` | The hero finder and installer |
 | `tools/audit/` | Contrast and bidi audits — see `tools/audit/README.md` |
 | `tools/dev-probes/` | In-page diagnostics, loaded as a mu-plugin, never as theme code |
 | `tools/shots/` | The capture script — see `tools/shots/README.md` |
@@ -153,12 +184,16 @@ the point of sending them. Wholesale republication of the catalogue is not.
 unique value is pinning and scrubbing; both are scroll hijacking, which the brief bans by
 name. IntersectionObserver + CSS + cross-document View Transitions cover the whole thing.
 
-**Authored natively RTL.** No `rtl.css`, no build-time flip — the site is Hebrew-only, so
-it uses logical properties throughout. Two documented exceptions: the Shop the Space stage
-and the dimension diagrams are forced `direction: ltr`, because their coordinates are
-physical positions in an image, not text flow. Get that wrong and every hotspot mirrors
-onto the wrong furniture — and casual QA never catches it, because the dots are still on
-objects.
+**Authored natively RTL.** No `rtl.css`, no build-time flip — the site is Hebrew-only, so it
+uses logical properties throughout. Two documented exceptions, both for the same reason: the
+dimension diagrams are forced `direction: ltr`, and לפי אור's price chip is positioned with
+physical `right`. Their coordinates are positions in an image, and an image does not mirror
+when the text does — authored logically, the chip jumped to the far side of the room. That
+is not hypothetical; it happened, and the screenshot is how it was caught.
+
+לפי אור also designs the classic RTL trap out of existence rather than handling it: with no
+scroll container there is no `scrollLeft`, so the bug documented at `collection.js:13` cannot
+occur there at all.
 
 **Progressive enhancement, verified.** Filters are plain links. Add-to-cart is
 `?add-to-cart=ID`, intercepted by JS. Both paths were tested with an HTTP client that runs
@@ -191,7 +226,9 @@ it is the most useful part of this repo for options 2 and 3.
 | Content must be scraped | The Store API is public | A paginated fetch, zero npm dependencies |
 | 90% of products have parseable dimensions | **3%** for that pattern; 51% across five formats plus native fields | The card's dimension bar was unbuildable as designed |
 | Products are shot on white, so `multiply` drops the backdrop | **28% studio, 72% room photographs** | The card branches per photo, measured at import |
-| The living room can be composed from their cut-outs | The cut-outs are bathroom fittings and lighting; the one studio sofa is pale-on-white, and multiply erases it | The scene is an **entryway**, and an obvious illustration rather than a fake photograph |
+| The living room can be composed from their cut-outs | The cut-outs are bathroom fittings and lighting; the one studio sofa is pale-on-white, and multiply erases it | Composing a room from cut-outs was abandoned |
+| **HR Design has no living-room photography** — this README's own earlier claim | **False, and it was our own bug.** The seeder capped downloads at 1024px, so the analysis never saw the real assets. `srcset` exposes the true widths: **32 real room photographs at 1400w and above**, living rooms included, up to 2560px | The illustrated room was deleted. לפי אור is built on **an actual photograph** of an actual living room |
+| A lamp can be photographed in a room | **No such photograph exists.** All 147 lighting products checked: 25 of 28 sampled are studio cut-outs, and the three room shots are 612w/612w/408w | The room is **relit by a model** at four hours, with the real lamp in it. Compositing the cut-out live in CSS was built first and rejected: it read as a sticker, because `filter` cannot compute light |
 | Their photography can carry a full-bleed hero | Median upload **750px**. The styled interiors are 473–750px while the cut-outs reach 3195px — backwards from what design needs | The hero is one of only 44 room photos above 1400w |
 | WooCommerce wraps prices in `<bdi>` | It does — and `wp_kses_post()` strips it, because `bdi` is missing from WordPress's allowed tags | `theme/inc/bidi.php`. Without it every price on a Hebrew site is silently mangled. |
 
@@ -207,5 +244,18 @@ it is the most useful part of this repo for options 2 and 3.
   a screen-reader label, live in `_hrd_dims_estimated`, and never touch WooCommerce's
   native fields. `wp post meta delete --all _hrd_dims_estimated` removes every one.
 - **The catalogue is a 250-product sample** of 923.
-- **The Shop the Space room is illustrated**, not photographed. Every hotspot points at a
-  real product HR Design sells.
+- **The four לפי אור frames are AI-generated depictions of HR Design's room, not their
+  photographs.** The room and the pendant are both real and both theirs, and the source was
+  their own photography — but a model re-rendered the scene at each hour rather than
+  relighting the original pixel-for-pixel. Geometry was verified to hold across all four
+  frames (0px drift, no object substituted) so the cross-fade reads as light rather than as
+  morphing furniture, but the pixels are a depiction. Presented as art direction, never as a
+  documentary photograph of their showroom. **This reverses the brief's original "real
+  photographs, no AI" rule, at the client's own direction.**
+- **The four lines of Hebrew copy in לפי אור are placeholders** pending the client's own
+  words. They are the highest-leverage twenty words in the section.
+- **לפי אור is the heaviest section on the site**, and it is a real cost of the above.
+  Measured transferred bytes, cache off: **567KB** at desktop 1×, **1.17MB** at desktop 2×,
+  **307KB** at mobile 2×, **1.17MB** at mobile 3×. It replaces ~750KB of SVG layers, so it
+  is a win at 1× and a loss at retina. Everything is lazy and below the fold, the srcset is
+  capped at 1536w, and the frames are WebP encoded once from the lossless source.

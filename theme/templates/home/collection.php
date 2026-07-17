@@ -38,10 +38,16 @@ if ( ! $products ) {
 	return;
 }
 
+// The accent is a 3-value enum, never a colour picker (tokens.css): term meta is author
+// input, so it is matched against the enum rather than pasted into a class name.
 $accent = get_term_meta( $term->term_id, 'hrd_accent', true ) ?: 'natural-forms';
+
+if ( ! in_array( $accent, array( 'natural-forms', 'warm-minimalism', 'outdoor-living' ), true ) ) {
+	$accent = 'natural-forms';
+}
 ?>
 
-<section class="section collection ground--accent collection--<?php echo esc_attr( $accent ); ?> bleed">
+<section class="section collection ground--accent collection-<?php echo esc_attr( $accent ); ?> bleed">
 	<div class="collection__rail" aria-hidden="true">
 		<span class="section__index">02 / <?php esc_html_e( 'קולקציה', 'hrdesign' ); ?></span>
 	</div>
@@ -75,12 +81,34 @@ $accent = get_term_meta( $term->term_id, 'hrd_accent', true ) ?: 'natural-forms'
 		<div class="collection__frame collection__frame--end">
 			<a class="collection__end-link t-display t-display--s" href="<?php echo esc_url( get_term_link( $term ) ); ?>">
 				<?php esc_html_e( 'לכל הקולקציה', 'hrdesign' ); ?>
-				<span class="icon--directional" aria-hidden="true">←</span>
+				<?php // Was a literal ←, which icon--directional then mirrored into a → pointing back up the track. ?>
+				<?php hrd_icon( 'arrow', array( 'size' => 20 ) ); ?>
 			</a>
 		</div>
 	</div>
 
-	<div class="collection__progress" aria-hidden="true">
-		<span class="collection__progress-fill" data-collection-progress></span>
+	<div class="collection__foot">
+		<div class="collection__progress" aria-hidden="true">
+			<span class="collection__progress-fill" data-collection-progress></span>
+		</div>
+
+		<?php
+		/*
+		 * Hidden until JS reveals it, the same bargain as the cart count in
+		 * templates/header/actions.php: arrows that cannot do anything never render.
+		 * The icon is authored pointing right and mirrors itself in RTL, so this is
+		 * "next"; home.css makes "prev" out of it by flipping the button.
+		 */
+		?>
+		<div class="collection__nav" hidden data-collection-nav>
+			<button type="button" class="collection__nav-btn collection__nav-btn--prev" data-collection-prev
+				aria-label="<?php esc_attr_e( 'הקודם', 'hrdesign' ); ?>">
+				<?php hrd_icon( 'arrow', array( 'size' => 20 ) ); ?>
+			</button>
+			<button type="button" class="collection__nav-btn collection__nav-btn--next" data-collection-next
+				aria-label="<?php esc_attr_e( 'הבא', 'hrdesign' ); ?>">
+				<?php hrd_icon( 'arrow', array( 'size' => 20 ) ); ?>
+			</button>
+		</div>
 	</div>
 </section>

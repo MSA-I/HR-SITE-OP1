@@ -116,9 +116,17 @@ add_action(
 	function () {
 		global $product;
 
+		/*
+		 * The returns sentence tracks the client's תקנון verbatim, not the theme's
+		 * defaults: 30 days מתאריך קניית המוצר, original packaging AND original invoice,
+		 * and הזמנה מיוחדת cannot be cancelled. It previously said 14 days from receipt —
+		 * both wrong, and the clock was the worse half: on furniture with a delivery lag,
+		 * counting from receipt hands the customer weeks they do not have. Same numbers as
+		 * templates/home/trust.php; the two must not drift apart.
+		 */
 		$sections = array(
-			__( 'חומרים ותחזוקה', 'hrdesign' ) => get_option( 'hrd_care_copy', __( 'כל פריט מיוצר מחומרים טבעיים, ולכן גוון ומרקם עשויים להשתנות מעט בין פריט לפריט. לניקוי — מטלית לחה ומעט סבון עדין. יש להימנע מחומרים ממיסים ומחשיפה ממושכת לשמש ישירה.', 'hrdesign' ) ),
-			__( 'משלוח, הרכבה והחזרות', 'hrdesign' ) => get_option( 'hrd_shipping_copy', __( 'משלוח לכל הארץ. פריטים גדולים מגיעים בהובלה ייעודית בתיאום מראש, וניתן להוסיף שירות הרכבה. ניתן להחזיר פריט באריזתו המקורית תוך 14 יום מקבלתו.', 'hrdesign' ) ),
+			__( 'חומרים ותחזוקה', 'hrdesign' ) => get_option( 'hrd_care_copy', __( 'כל פריט מיוצר מחומרים טבעיים, ולכן גוון ומרקם עשויים להשתנות מעט בין פריט לפריט. לניקוי: מטלית לחה ומעט סבון עדין. יש להימנע מחומרים ממיסים ומחשיפה ממושכת לשמש ישירה.', 'hrdesign' ) ),
+			__( 'משלוח, הרכבה והחזרות', 'hrdesign' ) => get_option( 'hrd_shipping_copy', __( 'משלוח לכל הארץ. פריטים גדולים מגיעים בהובלה ייעודית בתיאום מראש, וניתן להוסיף שירות הרכבה. ניתן להחזיר פריט תוך 30 יום מתאריך הרכישה, באריזתו המקורית ובצירוף החשבונית המקורית. בהזמנה מיוחדת לא ניתן לבטל.', 'hrdesign' ) ),
 		);
 
 		echo '<div class="pdp-details">';

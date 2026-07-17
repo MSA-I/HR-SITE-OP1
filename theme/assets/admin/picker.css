@@ -1,83 +1,60 @@
-.hrd-picker {
+/*
+ * By Light admin.
+ *
+ * The stage, the pin, the keyed ghost and the coordinate fields are all gone: the lamp is
+ * inside the photographs now, so there is nothing left to place. What remains is a product
+ * typeahead and four image slots.
+ */
+
+/* ---- The four frames ------------------------------------------------------ */
+
+.hrd-stops {
 	display: grid;
-	grid-template-columns: 1fr 380px;
-	gap: 20px;
-	align-items: start;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px;
+	margin: 16px 0;
 }
 
-@media (max-width: 1100px) {
-	.hrd-picker {
-		grid-template-columns: 1fr;
+@media (max-width: 900px) {
+	.hrd-stops {
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
-.hrd-picker__stage {
-	position: relative;
-	/* Coordinates are physical positions in an image, so the stage is LTR even in an
-	   RTL admin. Get this wrong and every pin mirrors onto the wrong object. */
-	direction: ltr;
-	background: #f0f0f1;
-	cursor: crosshair;
-	user-select: none;
-}
-
-.hrd-picker__stage img {
-	display: block;
-	width: 100%;
-	height: auto;
-}
-
-.hrd-pin {
-	position: absolute;
-	transform: translate(-50%, -50%);
-	width: 26px;
-	height: 26px;
-	border-radius: 999px;
-	border: 2px solid #fff;
-	background: #5e6b3e;
-	color: #fff;
-	font-size: 12px;
-	font-weight: 700;
-	line-height: 1;
-	cursor: grab;
-	box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
-	padding: 0;
-}
-
-.hrd-pin:active {
-	cursor: grabbing;
-}
-
-.hrd-picker__list {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.hrd-row {
-	display: grid;
-	grid-template-columns: 24px 1fr 70px auto;
-	gap: 8px;
-	align-items: start;
-	padding: 8px;
+.hrd-stop {
 	border: 1px solid #dcdcde;
 	background: #fff;
+	padding: 8px;
 }
 
-.hrd-row__num {
+.hrd-stop__thumb {
+	aspect-ratio: 1;
+	background: #f0f0f1;
 	display: grid;
 	place-items: center;
-	width: 24px;
-	height: 24px;
-	border-radius: 999px;
-	background: #5e6b3e;
-	color: #fff;
-	font-size: 12px;
-	font-weight: 700;
+	overflow: hidden;
+	margin: 6px 0;
 }
+
+.hrd-stop__thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* An empty slot must be loud: the section renders nothing at all unless all four are set,
+   so a missing frame is the difference between shipping and a blank space on the homepage. */
+.hrd-stop__empty {
+	color: #b32d2e;
+	font-size: 12px;
+}
+
+/* ---- The product typeahead ------------------------------------------------ */
 
 .hrd-row__main {
 	position: relative;
+	display: block;
 	min-width: 0;
 }
 

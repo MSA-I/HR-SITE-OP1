@@ -15,6 +15,8 @@ require_once HRD_DIR . '/inc/setup.php';
 require_once HRD_DIR . '/inc/assets.php';
 require_once HRD_DIR . '/inc/nav.php';
 require_once HRD_DIR . '/inc/bidi.php';
+require_once HRD_DIR . '/inc/brand.php';
+require_once HRD_DIR . '/inc/icons.php';
 
 /*
  * The audit probes used to be required from here behind a WP_DEBUG check. They now live
@@ -31,6 +33,14 @@ if ( class_exists( 'WooCommerce' ) ) {
 	require_once HRD_DIR . '/inc/woocommerce/single.php';
 	require_once HRD_DIR . '/inc/woocommerce/summary.php';
 
-	require_once HRD_DIR . '/inc/room-scene/cpt.php';
-	require_once HRD_DIR . '/inc/room-scene/metabox.php';
+	/*
+	 * Rooms are a theme concept rather than a taxonomy — a room is several product_cat
+	 * terms, so there is no term to hang meta on. Inside the WooCommerce guard because it
+	 * reads product_cat and filters woocommerce_page_title, and unconditional within it
+	 * because wp-cli needs the hrd_portal sizes registered to generate the crops.
+	 */
+	require_once HRD_DIR . '/inc/rooms.php';
+
+	require_once HRD_DIR . '/inc/by-light/scene.php';
+	require_once HRD_DIR . '/inc/by-light/metabox.php';
 }

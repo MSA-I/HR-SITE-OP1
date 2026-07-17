@@ -83,7 +83,8 @@ foreach ( hrd_filter_taxonomies() as $taxonomy => $label ) {
 				<span class="visually-hidden"><?php esc_html_e( 'מחיר מינימלי', 'hrdesign' ); ?></span>
 				<input type="number" name="min_price" inputmode="numeric" value="<?php echo esc_attr( $min_price ); ?>" min="<?php echo esc_attr( $bounds['min'] ); ?>" max="<?php echo esc_attr( $bounds['max'] ); ?>">
 			</label>
-			<span aria-hidden="true">—</span>
+			<?php // A range separator, so a hyphen. The em-dash is banned house-wide. ?>
+			<span aria-hidden="true">-</span>
 			<label>
 				<span class="visually-hidden"><?php esc_html_e( 'מחיר מרבי', 'hrdesign' ); ?></span>
 				<input type="number" name="max_price" inputmode="numeric" value="<?php echo esc_attr( $max_price ); ?>" min="<?php echo esc_attr( $bounds['min'] ); ?>" max="<?php echo esc_attr( $bounds['max'] ); ?>">

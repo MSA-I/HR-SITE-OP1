@@ -20,7 +20,12 @@ theme/assets/fonts/
 #
 # Nothing is lost by excluding it — `node tools/seed/fetch.mjs` reproduces the whole seed,
 # and the README documents the sequence.
+#
+# ANCHORED, and that leading slash is load-bearing. Unanchored, `seed/` matches a
+# directory named `seed` at ANY depth, so it silently swallowed all 19 scripts in
+# `tools/seed/` — including fetch.mjs, the one this very comment tells you to run. The
+# repo is public and its README could not be followed from a fresh clone.
 # ---------------------------------------------------------------------------
-seed/
+/seed/
 
 *.log

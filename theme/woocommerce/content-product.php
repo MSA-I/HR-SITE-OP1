@@ -8,6 +8,7 @@
  *   - 80% have no colour terms  -> the swatch row is absent, not empty
  *   - 48% have no dimensions    -> the spec line drops that half
  *   - 28% are variable          -> "בחר אפשרויות", never a silent quick-add
+ *   - 1% are price-on-request   -> "לפרטים", never a ₪0 quick-add
  *
  * @package hrdesign
  */
@@ -90,7 +91,7 @@ $photo     = hrd_photo_type( $product );
 				<a class="btn btn--quick" href="<?php echo esc_url( $permalink ); ?>">
 					<?php esc_html_e( 'בחר אפשרויות', 'hrdesign' ); ?>
 				</a>
-			<?php elseif ( $product->is_in_stock() ) : ?>
+			<?php elseif ( $product->is_purchasable() && $product->is_in_stock() ) : ?>
 				<?php
 				/*
 				 * A real link, not a <button>.

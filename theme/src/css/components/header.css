@@ -37,6 +37,30 @@
 	min-inline-size: 0;
 }
 
+/*
+ * The logo image branch. Height-constrained, never width-constrained: the asset is a
+ * 720x520 landscape wordmark and the header row is what is scarce, so block-size is the
+ * axis that has to be pinned. `width: auto` on top of WordPress's own width/height attrs
+ * is what stops it rendering at its intrinsic 720px.
+ */
+.site-header__logo--image {
+	display: flex;
+	align-items: center;
+}
+
+.site-header__logo--image img {
+	block-size: 40px;
+	inline-size: auto;
+	max-inline-size: 160px;
+	object-fit: contain;
+}
+
+@media (max-width: 720px) {
+	.site-header__logo--image img {
+		block-size: 32px;
+	}
+}
+
 .site-nav {
 	min-inline-size: 0;
 }
@@ -107,40 +131,6 @@
 	color: var(--acc);
 }
 
-/* ---- Footer -------------------------------------------------------------- */
-
-.site-footer {
-	background: var(--brown-700);
-	color: var(--cream-050);
-	padding-block: var(--s8);
-	margin-block-start: var(--s10);
-}
-
-.site-footer__inner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--s5);
-	flex-wrap: wrap;
-	max-inline-size: var(--max-width);
-	margin-inline: auto;
-	padding-inline: var(--page-margin);
-}
-
-.site-footer__copy {
-	font-size: var(--fs-sm);
-	opacity: 0.7;
-}
-
-.motion-toggle {
-	font-size: var(--fs-xs);
-	padding: var(--s2) var(--s4);
-	border: 1px solid rgb(250 246 239 / 0.3);
-	border-radius: var(--r-1);
-	color: inherit;
-}
-
-.motion-toggle[aria-pressed='true'] {
-	background: var(--cream-050);
-	color: var(--brown-700);
-}
+/* The footer used to live at the bottom of this file, back when it was a copyright line
+   and one button. It is now four columns and a bar, and it is not the header. See
+   components/footer.css. */

@@ -11,8 +11,28 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$posts = get_posts( array( 'posts_per_page' => 3 ) );
-if ( ! $posts ) {
+/*
+ * Thumbnail-less posts are excluded at the query, not skipped at render. .inspiration__media
+ * is a 4/3 tinted box that stays a 4/3 tinted box when there is no image inside it, so a
+ * post without one does not degrade, it just leaves a hole. This is also what keeps
+ * WordPress's default "Hello world!" out: it has no thumbnail, so it never matches.
+ *
+ * The gate is < 3 rather than zero because the layout is one lead plus two stacked items.
+ * Two posts leave the side column half empty; one leaves it empty. Below three, showing
+ * nothing is the better failure.
+ */
+$posts = get_posts(
+	array(
+		'post_type'           => 'post',
+		'posts_per_page'      => 3,
+		'post_status'         => 'publish',
+		'ignore_sticky_posts' => true,
+		'meta_key'            => '_thumbnail_id',
+		'meta_compare'        => 'EXISTS',
+	)
+);
+
+if ( count( $posts ) < 3 ) {
 	return;
 }
 ?>

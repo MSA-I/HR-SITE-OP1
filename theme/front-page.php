@@ -3,9 +3,9 @@
  * Homepage.
  *
  * Ground sequence: photo -> cream -> near-black -> accent -> cream -> cream-200 ->
- * cream -> brown. The two hard colour events (03 Shop the Space and 04 the featured
- * collection) sit ADJACENT, so the page's strongest moment lands exactly where the
- * differentiating feature lives. That is the reason for the order.
+ * cream -> brown. The two hard colour events (By Light and the featured collection) sit
+ * ADJACENT, so the page's strongest moment lands exactly where the differentiating
+ * feature lives. That is the reason for the order.
  *
  * @package hrdesign
  */
@@ -19,7 +19,7 @@ get_header();
 	<?php
 	get_template_part( 'templates/home/hero' );
 	get_template_part( 'templates/home/categories' );
-	get_template_part( 'templates/home/room-scene' );
+	get_template_part( 'templates/home/by-light' );
 	get_template_part( 'templates/home/collection' );
 	get_template_part( 'templates/home/new' );
 	get_template_part( 'templates/home/by-room' );

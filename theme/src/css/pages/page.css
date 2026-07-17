@@ -1,0 +1,75 @@
+/*
+ * Content pages: אודות, צור קשר, the policy, posts, search and the 404 — everything that
+ * is neither the homepage nor a product.
+ *
+ * Why this file did not exist until now: reset.css zeroes every margin and nothing ever
+ * put any back for the_content(). That was invisible rather than absent, because
+ * the_content() had never once rendered on this theme — index.php called the_excerpt(),
+ * which is also why the cart was empty. The policy page is 24 headings and paragraphs and
+ * every one of them sat flush against the next.
+ *
+ * Scoped to the classes the templates emit. Global p/h1-h4 stay typography.css's.
+ */
+
+.entry__title {
+	margin-block-end: var(--s5);
+}
+
+.entry__lede {
+	max-inline-size: 60ch;
+}
+
+/*
+ * The flow. One rule, because "no space between siblings" was the entire bug, and
+ * the_content() emits whatever the editor typed — the selector has to not care.
+ */
+.entry__content > * + * {
+	margin-block-start: var(--s4);
+}
+
+/* A heading belongs to what follows it, so it takes more room above than below. */
+.entry__content > * + :is(h2, h3, h4) {
+	margin-block-start: var(--s7);
+}
+
+.entry__content :is(h2, h3, h4) {
+	font-family: var(--ff-editorial);
+}
+
+.entry__content h2 {
+	font-size: var(--fs-lg);
+}
+
+.entry__content h3 {
+	font-size: var(--fs-md);
+}
+
+.entry__content :is(p, li) {
+	/* --lh-long has existed since the first commit and had no caller. This is the caller. */
+	line-height: var(--lh-long);
+	max-inline-size: 68ch;
+}
+
+.entry__content :is(ul, ol) {
+	padding-inline-start: var(--s5);
+}
+
+.entry__content li + li {
+	margin-block-start: var(--s2);
+}
+
+.entry__media {
+	margin-block: var(--s6);
+}
+
+/* Two adjacent .btn share an edge and read as one control otherwise. */
+.entry__back {
+	display: flex;
+	gap: var(--s3);
+	flex-wrap: wrap;
+	margin-block-start: var(--s7);
+}
+
+.entry-list__item + .entry-list__item {
+	margin-block-start: var(--s6);
+}

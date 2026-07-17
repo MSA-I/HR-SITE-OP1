@@ -31,12 +31,26 @@
 	--acc-mode: tint;
 
 	/* ---- Type ------------------------------------------------------------- */
-	--ff-display: 'Karantina', 'Arial Hebrew', sans-serif;
+	/* 'Karantina Fallback' is metric-adjusted (see fonts.css). Without it in the stack the
+	   swap lands on unadjusted Arial Hebrew and the headings jump. It was declared and
+	   never referenced, which is the same as not having it. */
+	--ff-display: 'Karantina', 'Karantina Fallback', 'Arial Hebrew', sans-serif;
 	--ff-body: 'Assistant', 'Arial Hebrew', sans-serif;
 	--ff-editorial: 'Frank Ruhl Libre', 'David Libre', serif;
 	--ff-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-	--fs-mono: 11px;
+	/*
+	 * 13, not 11. The small labels that TELL you where you are — the section rail
+	 * ("02 / קולקציה"), the eyebrows ("קולקציה במוקד"), the filter titles, the result
+	 * count — were 11px and the client called them "פיציים". He is right, and the file
+	 * already knew it: see --fs-base below, "Hebrew reads small. 15px is the mistake most
+	 * Israeli sites make." That reasoning was applied to body copy and never to the labels.
+	 *
+	 * Prices and the card's dimension line are NOT affected — they size off --fs-md and
+	 * --fs-sm, which is why this can move without inflating the detail text he asked to
+	 * leave alone.
+	 */
+	--fs-mono: 13px;
 	--fs-xs: 13px;
 	--fs-sm: 15px;
 	--fs-base: 17px; /* Hebrew reads small. 15px is the mistake most Israeli sites make. */
@@ -78,7 +92,7 @@
 	/* ---- Radius ----------------------------------------------------------- */
 	--r-0: 0; /* the default for everything */
 	--r-1: 2px;
-	--r-pill: 999px; /* status tags and hotspot dots. Nothing else. */
+	--r-pill: 999px; /* badges, stock chips, swatches, header pips. Nothing else. */
 	--r-arch: 50% 50% 0 0 / 33% 33% 0 0; /* section 06 portals ONLY */
 
 	/* ---- Edges ------------------------------------------------------------ */
@@ -99,7 +113,10 @@
 	--ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
 	--ease-inout: cubic-bezier(0.65, 0.05, 0.36, 1);
 	--ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
-	--ease-pop: cubic-bezier(0.34, 1.36, 0.64, 1); /* cart tick + hotspot reveal. Two uses. */
+	/* Currently unused: its only consumer was the hotspot reveal, which went with Shop the
+	   Space. Kept because an overshoot curve is a deliberate part of the motion language
+	   and re-deriving one by eye is how a second, slightly different pop gets invented. */
+	--ease-pop: cubic-bezier(0.34, 1.36, 0.64, 1);
 }
 
 /*

@@ -4,8 +4,8 @@
  *   node tools/audit/a11y.mjs
  *
  * Not a generic linter: it asserts the specific promises this theme made. Hebrew RTL,
- * bidi-isolated numbers, hotspots reachable by keyboard, no hover-only purchase path,
- * contrast on the real tokens.
+ * bidi-isolated numbers, the לפי אור stops reachable by keyboard, no hover-only purchase
+ * path, contrast on the real tokens.
  *
  * Injected into the page by tools/audit/run.mjs via Chrome.
  */
@@ -45,17 +45,32 @@ export const AUDIT = `(() => {
 
 	// ---- Touch targets ---------------------------------------------------
 	// 44px, including the transparent padding that gives a 14px dot a real target.
-	for (const el of document.querySelectorAll('.hotspot, .product-card__fav, .btn, .site-nav__link, .filter-chip')) {
+	for (const el of document.querySelectorAll('.byl__time, .product-card__fav, .btn, .site-nav__link, .filter-chip')) {
 		const r = el.getBoundingClientRect();
 		if (r.width === 0 && r.height === 0) continue; // not rendered on this page
 		if (r.height < 34 || r.width < 34) fail('touch-target', Math.round(r.width) + 'x' + Math.round(r.height), el);
 	}
 
-	// ---- Hotspots: the flagship feature must be keyboard reachable -------
-	for (const spot of document.querySelectorAll('.hotspot')) {
-		if (spot.tagName !== 'BUTTON') fail('hotspot-not-button', spot.tagName, spot);
-		if (spot.tabIndex < 0) fail('hotspot-not-focusable', String(spot.tabIndex), spot);
-		if (!spot.getAttribute('aria-label')) fail('hotspot-no-label', '', spot);
+	/*
+	 * ---- לפי אור: the flagship feature must be keyboard reachable --------
+	 *
+	 * This replaced the hotspot checks, which went with Shop the Space. They were left
+	 * matching '.hotspot' for a while and passed every run — a check that matches nothing
+	 * is not a passing check, it is a missing one, and it reports success either way.
+	 *
+	 * The control is a native radio group, so the old questions dissolve: radios are
+	 * focusable and arrow-navigable for free and the <label> names them. What CAN break is
+	 * the focus ring, because the radio itself is visually-hidden and the ring has to be
+	 * put back by hand on the label. A keyboard user with no ring is driving blind.
+	 */
+	const stops = [...document.querySelectorAll('.byl__radio')];
+	if (stops.length) {
+		for (const stop of stops) {
+			if (stop.tabIndex < 0) fail('byl-stop-not-focusable', String(stop.tabIndex), stop);
+			const label = document.querySelector(`label[for="${stop.id}"]`);
+			if (!label) fail('byl-stop-no-label', stop.id, stop);
+		}
+		if (!document.querySelector('.byl__times legend')) fail('byl-group-unnamed', 'no legend on the fieldset');
 	}
 
 	// ---- No hover-only path to purchase ---------------------------------

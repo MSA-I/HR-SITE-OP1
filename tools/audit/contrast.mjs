@@ -100,8 +100,10 @@ if (blue <= 7) failures++;
 check('cream text on full blue (reverse mode)', 'cream-050', 'blue', 4.5);
 
 console.log('\nAccent on the dark section\n');
-check('olive accent on ink (active hotspot)', 'olive', 'ink-900', 3);
-check('cream dot on ink', 'cream-050', 'ink-900', 3);
+// Still exactly the right pair to check: it is now the active stop's underline and the
+// focus ring on the לפי אור control, both olive on the ink ground.
+check('olive accent on ink (active stop + focus ring)', 'olive', 'ink-900', 3);
+check('cream on ink (the dark section\'s text)', 'cream-050', 'ink-900', 3);
 
 console.log(failures ? `\n${failures} contrast failure(s).\n` : '\nAll contrast pairings pass.\n');
 process.exit(failures ? 1 : 0);

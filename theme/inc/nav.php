@@ -50,19 +50,26 @@ function hrd_category_tree() {
 
 	$excluded = hrd_nav_excluded_slugs();
 
+	// Deliberately NOT ordered by count. `orderby => 'count'` sorts on the raw
+	// wp_term_taxonomy.count, but WooCommerce swaps in the recursive
+	// product_count_product_cat meta only after the query returns — so a parent whose
+	// products all live in its children has a raw count of 0 and sorts last. ריהוט is
+	// 55% of the catalogue and was falling off the end of both slices below.
 	$tops = get_terms(
 		array(
 			'taxonomy'   => 'product_cat',
 			'parent'     => 0,
 			'hide_empty' => true,
-			'orderby'    => 'count',
-			'order'      => 'DESC',
 		)
 	);
 
 	if ( is_wp_error( $tops ) ) {
 		return array();
 	}
+
+	// Sort here, where the counts are the recursive ones the tiles actually print.
+	$tops = array_values( array_filter( $tops, fn( $top ) => (int) $top->count > 0 ) );
+	usort( $tops, fn( $a, $b ) => (int) $b->count <=> (int) $a->count );
 
 	$tree = array();
 

@@ -30,6 +30,8 @@ const KEEP = new Set([
 	'seed',
 	'theme',
 	'tools',
+	'docs',
+	'README.md',
 	'.git',
 ]);
 

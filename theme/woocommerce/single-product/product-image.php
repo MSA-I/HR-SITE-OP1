@@ -72,7 +72,7 @@ $axes = hrd_product_axes( $product );
 			<figure class="pdp-frame pdp-frame--scale reveal">
 				<?php get_template_part( 'templates/product/scale-reference', null, array( 'l' => $axes['l'], 'h' => $axes['h'] ) ); ?>
 				<figcaption class="pdp-frame__cap t-mono">
-					<?php echo $axes['estimated'] ? esc_html__( 'קנה מידה משוער — אדם בגובה 175 ס"מ', 'hrdesign' ) : esc_html__( 'קנה מידה — אדם בגובה 175 ס"מ', 'hrdesign' ); ?>
+					<?php echo $axes['estimated'] ? esc_html__( 'קנה מידה משוער: אדם בגובה 175 ס"מ', 'hrdesign' ) : esc_html__( 'קנה מידה: אדם בגובה 175 ס"מ', 'hrdesign' ); ?>
 				</figcaption>
 			</figure>
 		<?php endif; ?>

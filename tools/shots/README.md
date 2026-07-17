@@ -11,8 +11,8 @@ Desktop is 1440×900 at 2x. Mobile is 390×844 at 3x.
 |---|---|---|---|
 | 01 | Hero | 1440 | The identity in one frame: Karantina display, their own 2560px room photograph, two buttons, no carousel. |
 | 02 | Category tiles | 1440 | Real term images, real counts, the asymmetric 3-2 split. |
-| 03 | **Shop the Space** | 1440 | The differentiator. Five real products, hotspots revealed. |
-| 04 | **Shop the Space — card open** | 1440 | The mechanism wired to the sale: price, dimensions, add to cart. |
+| 03 | **לפי אור — 07:00** | 1440 | The argument. A real room, a real lamp, and a section telling you that you do not need it yet. |
+| 04 | **לפי אור — 23:00** | 1440 | The pitch. The lamp is the only light left and the only thing carrying colour — and it is for sale. |
 | 05 | Featured collection | 1440 | The horizontal section — native inline scroll, not a pinned hijack. |
 | 06 | Shop by room | 1440 | The arch portals. The only radius in the system. |
 | 07 | Catalogue | 1440 | Studio plates and room photographs side by side, reading as one system. |
@@ -21,7 +21,7 @@ Desktop is 1440×900 at 2x. Mobile is 390×844 at 3x.
 | 10 | Dimension diagram | 1440 | Generated from three numbers: the isometric drawing and the 175cm scale silhouette. |
 | 11 | Mega menu | 1440 | One preview plate, not thirty thumbnails. |
 | 12 | Catalogue | 390 | Two-up on mobile, quick-add always visible. |
-| 13 | **Shop the Space** | 390 | The strip is the control; the pins are the legend. A separate portrait composition, not a crop. |
+| 13 | **לפי אור** | 390 | The same square photograph, uncropped. No portrait re-composition exists, because none is needed. |
 | 14 | Product page | 390 | The buy bar arrives only after the in-flow button leaves. |
 
 ## Running
@@ -52,10 +52,13 @@ Say these out loud rather than letting them be discovered:
   the other 119 are inferred and rendered with a tilde, a tooltip and a screen-reader
   label. They never touch WooCommerce's native fields — `wp post meta delete --all
   _hrd_dims_estimated` removes every one.
-- **The Shop the Space room is an illustration, not a photograph.** It is composed from
-  five real product cut-outs on flat drawn planes, because the catalogue has no lifestyle
-  photography of a living room and the studio cut-outs are bathroom fittings and lighting.
-  Every hotspot points at a product HR Design actually sells.
+- **The four לפי אור frames are AI-generated depictions of HR Design's room.** The room and
+  the pendant are both real and both theirs, and their own photography was the source — but
+  a model re-rendered the scene at each hour rather than relighting the original
+  pixel-for-pixel. No photograph of any lamp in any room exists in the catalogue, which is
+  why. Geometry was verified to hold across all four (0px drift, no object substituted).
+  Art direction, never a documentary photograph of their showroom.
+- **Its four Hebrew lines are placeholders** pending the client's own copy.
 - **The catalogue is 250 of 923 products**, seeded from the live Store API.
 - **Two of the brief's asks were not built**, on purpose: reviews with photos (there are
   zero reviews in the entire store) and AR product placement (needs 3D models that do not

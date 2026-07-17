@@ -231,7 +231,64 @@ function hrd_photo_type( $product ) {
 }
 
 /**
+ * Is this product priced on request rather than actually free?
+ *
+ * Three products import with a price of '0' because the live store has no price on them:
+ * they are quoted per enquiry. WooCommerce cannot tell that apart from a giveaway, so it
+ * treats them as purchasable at ₪0 — the card grows a working quick-add, the Store API
+ * reports needs_payment: false, and the order goes through without a payment step.
+ *
+ * Note '0' is not '' here. WC_Product::is_purchasable() already refuses an empty price;
+ * it is specifically the zero that slips past, which is why this needs its own rule.
+ *
+ * @param WC_Product $product Product.
+ * @return bool
+ */
+function hrd_is_price_on_request( $product ) {
+	$price = $product->get_price();
+	return '' === $price || 0.0 === (float) $price;
+}
+
+/*
+ * Both sides of price-on-request, filtered at source.
+ *
+ * Every price on this site — card, buy box, cart line, Store API — resolves through
+ * get_price_html() and is_purchasable(), so filtering the product rather than patching
+ * templates is what makes this hold everywhere, including the routes the theme does not
+ * own.
+ */
+
+add_filter(
+	'woocommerce_get_price_html',
+	function ( $html, $product ) {
+		return hrd_is_price_on_request( $product )
+			? esc_html__( 'מחיר לפי פנייה', 'hrdesign' )
+			: $html;
+	},
+	10,
+	2
+);
+
+/*
+ * The one that actually closes the ₪0 checkout. Without it the price line reads honestly
+ * and the cart still takes the item for nothing.
+ */
+add_filter(
+	'woocommerce_is_purchasable',
+	function ( $purchasable, $product ) {
+		return $purchasable && ! hrd_is_price_on_request( $product );
+	},
+	10,
+	2
+);
+
+/**
  * Estimated delivery copy. One global default; per-product meta wins when set.
+ *
+ * Stock alone does not earn the day range. A price-on-request product is in stock and
+ * still has no agreed price, so quoting "7-14 ימי עסקים" on it promises a delivery
+ * window for a sale nobody has priced yet. Purchasability is the honest test, and the
+ * enquiry copy already says the right thing for both cases that fail it.
  *
  * @param WC_Product $product Product.
  * @return string
@@ -242,7 +299,7 @@ function hrd_delivery_estimate( $product ) {
 		return $override;
 	}
 
-	return $product->is_in_stock()
-		? get_option( 'hrd_delivery_default', __( 'אספקה תוך 7–14 ימי עסקים', 'hrdesign' ) )
-		: get_option( 'hrd_delivery_oos', __( 'בהזמנה מיוחדת — צרו קשר לזמן אספקה', 'hrdesign' ) );
+	return $product->is_purchasable() && $product->is_in_stock()
+		? get_option( 'hrd_delivery_default', __( 'אספקה תוך 7-14 ימי עסקים', 'hrdesign' ) )
+		: get_option( 'hrd_delivery_oos', __( 'בהזמנה מיוחדת: צרו קשר לזמן אספקה', 'hrdesign' ) );
 }
