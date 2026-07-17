@@ -39,7 +39,7 @@ if ( ! $new && ! $best ) {
 <section class="section ground--cream" data-tabs>
 	<div class="grid">
 		<div class="section__rail">
-			<span class="section__index">03 / <?php esc_html_e( 'חדשים', 'hrdesign' ); ?></span>
+			<span class="section__index"><span class="section__num">03</span> / <span class="section__label"><?php esc_html_e( 'חדשים', 'hrdesign' ); ?></span></span>
 		</div>
 
 		<div class="section__body">

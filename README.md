@@ -6,7 +6,7 @@ brief, meant to be compared side by side.
 
 | | Direction | Repo |
 |---|---|---|
-| **1** | **Gallery Apartment** — this one. A custom theme, no framework, 4KB of JS. | [`HR-SITE-OP1`](https://github.com/MSA-I/HR-SITE-OP1) |
+| **1** | **Gallery Apartment** — this one. A custom theme, no framework, 4.3KB of JS. | [`HR-SITE-OP1`](https://github.com/MSA-I/HR-SITE-OP1) |
 | 2 | **Animation stack** — the same brief rebuilt full-RTL on a modern animation stack. | [`HR-SITE-OP2`](https://github.com/MSA-I/HR-SITE-OP2) |
 | 3 | **Space planner** — a harness for one question: how a 3D space-planner behaves inside the existing page shell. | [`HR-SITE-OP3`](https://github.com/MSA-I/HR-SITE-OP3) |
 
@@ -180,9 +180,13 @@ the point of sending them. Wholesale republication of the catalogue is not.
 
 ## Decisions worth defending
 
-**No GSAP, no Lenis, no framework.** The theme's JavaScript is **4KB**. ScrollTrigger's
+**No GSAP, no Lenis, no framework.** The theme's JavaScript is **4.3KB**. ScrollTrigger's
 unique value is pinning and scrubbing; both are scroll hijacking, which the brief bans by
 name. IntersectionObserver + CSS + cross-document View Transitions cover the whole thing.
+
+The benefits counter is the one number tween on the site and it is 90 lines of
+`requestAnimationFrame`, not a dependency. It counts the two figures that have somewhere
+to travel and leaves the two ones alone, because a counter from 0 to 1 is a flicker.
 
 **Authored natively RTL.** No `rtl.css`, no build-time flip — the site is Hebrew-only, so it
 uses logical properties throughout. Two documented exceptions, both for the same reason: the
@@ -238,7 +242,7 @@ it is the most useful part of this repo for options 2 and 3.
 
 - **LCP was never measured.** A backgrounded automation tab does not paint, so LCP and FCP
   return `null`. Payload is verified: **75KB across 10 requests** on a first visit; theme
-  JS 4KB, CSS 8KB. The plan's "LCP < 2.5s on throttled 4G" gate is **not** claimed as
+  JS 4.3KB, CSS 9KB. The plan's "LCP < 2.5s on throttled 4G" gate is **not** claimed as
   passed.
 - **119 of 250 products carry estimated dimensions.** They render with a `~`, a tooltip and
   a screen-reader label, live in `_hrd_dims_estimated`, and never touch WooCommerce's
@@ -252,8 +256,11 @@ it is the most useful part of this repo for options 2 and 3.
   morphing furniture, but the pixels are a depiction. Presented as art direction, never as a
   documentary photograph of their showroom. **This reverses the brief's original "real
   photographs, no AI" rule, at the client's own direction.**
-- **The four lines of Hebrew copy in לפי אור are placeholders** pending the client's own
-  words. They are the highest-leverage twenty words in the section.
+- **The four lines of Hebrew copy in לפי אור are ours, not the client's.** They are the
+  highest-leverage twenty words in the section and they are still open to his pen; what
+  changed is that they now name their own hour, so the line and the stop the reader
+  pressed agree, and their lengths vary rather than landing as four sentences of one
+  weight.
 - **לפי אור is the heaviest section on the site**, and it is a real cost of the above.
   Measured transferred bytes, cache off: **567KB** at desktop 1×, **1.17MB** at desktop 2×,
   **307KB** at mobile 2×, **1.17MB** at mobile 3×. It replaces ~750KB of SVG layers, so it

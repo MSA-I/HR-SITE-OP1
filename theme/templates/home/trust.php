@@ -22,11 +22,18 @@ defined( 'ABSPATH' ) || exit;
  *   - There is a showroom address, but no published hours and no "בתיאום מראש" anywhere,
  *     so the claim is just the room.
  */
+/*
+ * 'count' opts the number into the count-up, and two of the four decline it: a counter
+ * that runs from 0 to 1 renders one frame of "0" and then the answer, which is a flicker
+ * rather than an animation. Counting the two numbers that have somewhere to travel and
+ * leaving the ones is the honest version — all four still arrive together on the shared
+ * .stagger, so the section reads as one movement either way.
+ */
 $items = array(
-	array( 'num' => '30', 'unit' => __( 'יום', 'hrdesign' ), 'label' => __( 'החזרה בתנאי התקנון', 'hrdesign' ) ),
-	array( 'num' => '7-14', 'unit' => __( 'ימים', 'hrdesign' ), 'label' => __( 'אספקה לכל הארץ', 'hrdesign' ) ),
-	array( 'num' => '1', 'unit' => __( 'שנה', 'hrdesign' ), 'label' => __( 'אחריות החברה', 'hrdesign' ) ),
-	array( 'num' => '1', 'unit' => __( 'אולם', 'hrdesign' ), 'label' => __( 'תצוגה', 'hrdesign' ) ),
+	array( 'num' => '30', 'unit' => __( 'יום', 'hrdesign' ), 'label' => __( 'החזרה בתנאי התקנון', 'hrdesign' ), 'count' => true ),
+	array( 'num' => '7-14', 'unit' => __( 'ימים', 'hrdesign' ), 'label' => __( 'אספקה לכל הארץ', 'hrdesign' ), 'count' => true ),
+	array( 'num' => '1', 'unit' => __( 'שנה', 'hrdesign' ), 'label' => __( 'אחריות החברה', 'hrdesign' ), 'count' => false ),
+	array( 'num' => '1', 'unit' => __( 'אולם', 'hrdesign' ), 'label' => __( 'תצוגה', 'hrdesign' ), 'count' => false ),
 );
 ?>
 
@@ -37,7 +44,7 @@ $items = array(
 				<?php foreach ( $items as $i => $item ) : ?>
 					<li class="trust__item" style="--i: <?php echo (int) $i; ?>">
 						<p class="trust__num">
-							<bdi><?php echo esc_html( $item['num'] ); ?></bdi>
+							<bdi<?php echo $item['count'] ? ' data-count' : ''; ?>><?php echo esc_html( $item['num'] ); ?></bdi>
 							<span class="trust__unit"><?php echo esc_html( $item['unit'] ); ?></span>
 						</p>
 						<p class="trust__label"><?php echo esc_html( $item['label'] ); ?></p>

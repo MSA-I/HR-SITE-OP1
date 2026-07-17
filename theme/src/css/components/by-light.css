@@ -204,7 +204,28 @@
 	min-block-size: 44px;
 	display: grid;
 	place-items: center;
-	border-block-end: 1px solid transparent;
+	border-block-end: 2px solid transparent;
+}
+
+/*
+ * A tick per stop, sitting on the rail.
+ *
+ * The rail was drawn as one unbroken line with four labels floating over it, which is a
+ * line, not a timeline — nothing said where a stop began or ended, so four hours read as
+ * one smear and the only thing marking the current one was a hairline under the label.
+ * The tick is what divides them, and it is also what the eye lands on: it grows and takes
+ * the accent when its stop is live, so the state is carried twice over (tick and label)
+ * rather than resting on a 1px border at 3.15:1.
+ */
+.byl__time::before {
+	content: '';
+	position: absolute;
+	inset-block-end: 0;
+	inset-inline-start: 50%;
+	translate: 50% 0; /* RTL-safe: no left/right, no direction branch */
+	inline-size: 1px;
+	block-size: 6px;
+	background: rgb(250 246 239 / 0.3);
 }
 
 [data-motion='full'] .byl__time {
@@ -213,13 +234,28 @@
 		border-color var(--dur-2) var(--ease-out);
 }
 
+[data-motion='full'] .byl__time::before {
+	transition:
+		block-size var(--dur-2) var(--ease-out),
+		background-color var(--dur-2) var(--ease-out);
+}
+
 .byl__time:hover {
 	color: rgb(250 246 239 / 0.8);
+}
+
+.byl__time:hover::before {
+	background: rgb(250 246 239 / 0.6);
 }
 
 .byl__radio:checked + .byl__time {
 	color: var(--cream-050);
 	border-block-end-color: var(--acc);
+}
+
+.byl__radio:checked + .byl__time::before {
+	block-size: 12px;
+	background: var(--acc);
 }
 
 /* The radio is visually-hidden, so the focus ring has to be put back by hand — on the

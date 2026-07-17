@@ -1,6 +1,7 @@
 <?php
 /**
- * Installs the brand logo and sets it as the custom logo.
+ * Installs the two brand marks: the transparent wordmark on the footer, the live site's
+ * own header tile on the header.
  *
  *   docker compose exec wpcli wp eval-file /tools/seed/install-logo.php
  *
@@ -11,7 +12,10 @@
  * importer would file it against a _hrd_src_id it does not have.
  *
  * Pulls straight from the live site rather than from /seed, because unlike the hero
- * there is no fetch step to run first — it is one 40KB PNG.
+ * there is no fetch step to run first — two small files.
+ *
+ * These are two different assets, not two sizes of one, and that was the thing this
+ * script originally got wrong. See the header block at the bottom.
  */
 
 defined( 'ABSPATH' ) || die( 'wp eval-file only' );
@@ -20,6 +24,9 @@ require_once ABSPATH . 'wp-admin/includes/image.php';
 require_once ABSPATH . 'wp-admin/includes/file.php';
 
 const HRD_LOGO_URL = 'https://hr-design.co.il/wp-content/uploads/2021/12/156828179_245748037204194_969586242701827269_n-big.png';
+
+// The live site's header logo. A different file from the one above, not a crop of it.
+const HRD_HEADER_LOGO_URL = 'https://hr-design.co.il/wp-content/uploads/2021/12/109838972_128419198937079_6705625843572566784_n.jpg';
 
 // Marks the attachment as ours so a re-run replaces instead of accumulating, the same
 // way the hero uses _hrd_hero_src.
@@ -163,26 +170,93 @@ update_post_meta( $attachment_id, '_wp_attachment_image_alt', 'HR Design' );
  * 11.48:1 on --brown-700. On the header, half the logo is invisible and it renders as a
  * gold sliver next to a ghost. On the footer it is clean.
  *
- * So this goes in its own option rather than custom_logo. custom_logo is the header slot
- * and stays empty until there is an asset that survives cream — at which point the client
- * uploads it in the Customizer and header.php lights up with no code change, because it
- * already branches on has_custom_logo().
+ * So this goes in its own option rather than custom_logo. The header is fed separately,
+ * below, from the asset the live site actually uses there.
  */
 update_option( 'hrd_footer_logo', $attachment_id );
 
-// Undo the earlier assignment if this script already ran when it still set custom_logo.
-if ( (int) get_theme_mod( 'custom_logo' ) === (int) $attachment_id ) {
-	remove_theme_mod( 'custom_logo' );
-}
-
 WP_CLI::success(
 	sprintf(
-		'logo attachment %d — %dx%d, set as hrd_footer_logo',
+		'footer logo attachment %d — %dx%d, set as hrd_footer_logo',
 		$attachment_id,
 		$meta['width'] ?? 0,
 		$meta['height'] ?? 0
 	)
 );
 
-WP_CLI::log( 'note: light asset (mean luma 185) — footer only, 11.48:1 on brown.' );
-WP_CLI::warning( 'header still has no logo. Ask the client for a DARK version for the cream header.' );
+/*
+ * The header mark.
+ *
+ * This script used to end by asking the client for a dark version of the mark for the
+ * cream header. That request was unnecessary: the live site has been solving this since
+ * 2021, and not the way we assumed. It does not own a dark mark. It takes the same white
+ * and gold artwork and bakes it onto a dark grey plate — an opaque 148x146 JPG, ground
+ * measured at #2E302F, mean luma 64.4. The mark never had to survive cream. It was given
+ * something else to sit on.
+ *
+ * So the header gets their tile, unmodified: same file, same square, same ground. No
+ * recolour and no re-cut of a client's brand asset to suit our palette, and no invented
+ * dark variant of a mark that does not have one.
+ *
+ * The known cost, accepted deliberately: header.css gives the logo 40px of height, and
+ * the live site renders this tile at 148px. At 40 the Hebrew tagline inside it lands at
+ * roughly 3px and is decoration rather than text — which is why the alt text below
+ * carries the name and the tagline is not transcribed into it. If the tagline needs to
+ * be legible, the header row is what has to change, not the file.
+ */
+foreach ( get_posts(
+	array(
+		'post_type'   => 'attachment',
+		'meta_key'    => HRD_LOGO_META,
+		'meta_value'  => HRD_HEADER_LOGO_URL,
+		'numberposts' => -1,
+		'fields'      => 'ids',
+	)
+) as $old ) {
+	wp_delete_attachment( $old, true );
+}
+
+$header_tmp = download_url( HRD_HEADER_LOGO_URL );
+if ( is_wp_error( $header_tmp ) ) {
+	WP_CLI::error( 'header logo download failed: ' . $header_tmp->get_error_message() );
+}
+
+// Opaque JPG: nothing to trim. hrd_trim_png() reads GD's alpha channel and there is none.
+$header_upload = wp_upload_bits( 'hr-design-logo-header.jpg', null, file_get_contents( $header_tmp ) );
+unlink( $header_tmp );
+
+if ( ! empty( $header_upload['error'] ) ) {
+	WP_CLI::error( $header_upload['error'] );
+}
+
+$header_id = wp_insert_attachment(
+	array(
+		'post_mime_type' => 'image/jpeg',
+		'post_title'     => 'HR Design — header logo',
+		'post_status'    => 'inherit',
+	),
+	$header_upload['file']
+);
+
+if ( is_wp_error( $header_id ) ) {
+	WP_CLI::error( $header_id->get_error_message() );
+}
+
+$header_meta = wp_generate_attachment_metadata( $header_id, $header_upload['file'] );
+wp_update_attachment_metadata( $header_id, $header_meta );
+
+update_post_meta( $header_id, HRD_LOGO_META, HRD_HEADER_LOGO_URL );
+update_post_meta( $header_id, '_wp_attachment_image_alt', 'HR Design' );
+
+set_theme_mod( 'custom_logo', $header_id );
+
+WP_CLI::success(
+	sprintf(
+		'header logo attachment %d — %dx%d, set as custom_logo',
+		$header_id,
+		$header_meta['width'] ?? 0,
+		$header_meta['height'] ?? 0
+	)
+);
+
+WP_CLI::log( 'note: header tile carries its own #2E302F ground (luma 64.4) — it does not rely on the header colour.' );

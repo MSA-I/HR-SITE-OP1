@@ -111,10 +111,11 @@
 	}
 }
 
+/* Carries a collection name — Hebrew. Set like Hebrew; see .t-meta. */
 .pdp__eyebrow {
-	font-family: var(--ff-mono);
-	font-size: var(--fs-mono);
-	letter-spacing: 0.08em;
+	font-family: var(--ff-body);
+	font-size: var(--fs-sm);
+	letter-spacing: normal;
 	color: var(--acc);
 }
 

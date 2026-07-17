@@ -49,8 +49,25 @@ if ( ! $image_id ) {
 	<?php endif; ?>
 
 	<div class="hero__inner stagger">
+		<?php
+		/*
+		 * The default was "בית עם אופי, לא קטלוג" — the "not X, it's Y" construction, which
+		 * is the single most recognisable machine-written sentence shape there is, and it
+		 * was also the same promise every other furniture site in this market opens with.
+		 *
+		 * This says what the company is registered as and what its own mark has claimed
+		 * since 2021: חב' אייצ' אר עיצוב וייצור, and עיצוב | תכנון | ייצור under the logo.
+		 * They manufacture. The site had never once mentioned it, which is most of what the
+		 * brief means by "works as a shop but doesn't tell a story".
+		 *
+		 * Two verbs, not the mark's three: "מעצבים ומייצרים" is a claim about this company
+		 * and stops there. Naming the whole catalogue would overreach — 147 of the lighting
+		 * products are studio cut-outs of imported fittings, and nothing here sources who
+		 * made them.
+		 */
+		?>
 		<h1 class="hero__title t-display t-display--m" style="--i: 0">
-			<?php echo esc_html( get_option( 'hrd_hero_title', __( 'בית עם אופי, לא קטלוג', 'hrdesign' ) ) ); ?>
+			<?php echo esc_html( get_option( 'hrd_hero_title', __( 'מעצבים ומייצרים', 'hrdesign' ) ) ); ?>
 		</h1>
 
 		<div class="hero__actions" style="--i: 1">

@@ -40,12 +40,13 @@ if ( count( $posts ) < 3 ) {
 <section class="section ground--cream">
 	<div class="grid">
 		<div class="section__rail">
-			<span class="section__index">05 / <?php esc_html_e( 'השראה', 'hrdesign' ); ?></span>
+			<span class="section__index"><span class="section__num">05</span> / <span class="section__label"><?php esc_html_e( 'השראה', 'hrdesign' ); ?></span></span>
 		</div>
 
 		<div class="section__body">
 			<header class="section__head stagger">
-				<h2 class="t-display t-display--s" style="--i: 0"><?php esc_html_e( 'השראה', 'hrdesign' ); ?></h2>
+				<?php // Not "השראה" — the rail two elements up already says it. The heading names what is actually below it. ?>
+				<h2 class="t-display t-display--s" style="--i: 0"><?php esc_html_e( 'מהבלוג', 'hrdesign' ); ?></h2>
 			</header>
 
 			<div class="inspiration">

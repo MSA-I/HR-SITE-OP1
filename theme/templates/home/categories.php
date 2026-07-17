@@ -20,7 +20,7 @@ $tiles = array_slice( $tree, 0, 5 );
 <section class="section ground--cream">
 	<div class="grid">
 		<div class="section__rail">
-			<span class="section__index">01 / <?php esc_html_e( 'קטגוריות', 'hrdesign' ); ?></span>
+			<span class="section__index"><span class="section__num">01</span> / <span class="section__label"><?php esc_html_e( 'קטגוריות', 'hrdesign' ); ?></span></span>
 		</div>
 
 		<div class="section__body">

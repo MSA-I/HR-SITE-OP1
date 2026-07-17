@@ -44,10 +44,11 @@
 	border-block-end: var(--rule);
 }
 
+/* "סינון" is Hebrew, so it is set like Hebrew: body face, no tracking. See .t-meta. */
 .filters__title {
-	font-family: var(--ff-mono);
-	font-size: var(--fs-mono);
-	letter-spacing: 0.08em;
+	font-family: var(--ff-body);
+	font-size: var(--fs-sm);
+	letter-spacing: normal;
 	color: var(--brown-500);
 	font-weight: 400;
 }

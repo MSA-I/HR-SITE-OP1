@@ -7,24 +7,82 @@
  * retouching, one line. The constraint becomes the signature.
  */
 
+/*
+ * The grid is ruled, and the archive is why: 26 cream plates on a cream ground, four to a
+ * row, with nothing between them. Each card is legible on its own and the page is a wall —
+ * the eye gets no help deciding where one product stops. The rule under each plate was
+ * already doing that job horizontally; this is the same rule, turned.
+ *
+ * Vertical hairlines only, matching .section__rail::after (layout.css:73) — the one
+ * vertical line the system already draws. No boxes: a border around each card would make
+ * 26 containers where the design has none, and the plate is already the container.
+ */
 .products {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
-	gap: var(--s7) var(--gutter);
+	gap: var(--s8) var(--gutter);
 	margin: 0;
 	padding: 0;
 	list-style: none;
+}
+
+/*
+ * The rule hangs off the card's inline-start, so the leading card of each row must not
+ * draw one — otherwise the grid gets an outer edge it did not ask for. Which card that is
+ * depends on the column count, so every breakpoint re-states both halves: it re-arms the
+ * previous query's exemption before declaring its own.
+ *
+ * That re-arming is load-bearing, not repetition. These are all max-width queries, so at
+ * 1000px the 1400 and 1100 blocks are both live, and `:nth-child(3n+1)` (0,2,0) outranks a
+ * bare `.product-card` (0,1,0) no matter which is written last. Without the re-arm, card 4
+ * keeps the three-column exemption while sitting second in a two-column row, and loses its
+ * rule at exactly the width where the rules matter most.
+ */
+/*
+ * Not on .products--offset. That grid drops its second card 96px to break the row on
+ * purpose (home.css:459), and a column rule against a card that starts lower than its
+ * neighbours reads as a rule that failed to reach the top. The offset row is already
+ * divided — by the offset.
+ */
+.products:not(.products--offset) > .product-card {
+	border-inline-start: var(--rule);
+	padding-inline-start: var(--gutter);
+}
+
+.products:not(.products--offset) > .product-card:nth-child(4n + 1) {
+	border-inline-start: 0;
+	padding-inline-start: 0;
 }
 
 @media (max-width: 1400px) {
 	.products {
 		grid-template-columns: repeat(3, 1fr);
 	}
+
+	.products:not(.products--offset) > .product-card:nth-child(4n + 1) {
+		border-inline-start: var(--rule);
+		padding-inline-start: var(--gutter);
+	}
+
+	.products:not(.products--offset) > .product-card:nth-child(3n + 1) {
+		border-inline-start: 0;
+		padding-inline-start: 0;
+	}
 }
 
 @media (max-width: 1100px) {
 	.products {
 		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.products:not(.products--offset) > .product-card:nth-child(3n + 1) {
+		border-inline-start: var(--rule);
+		padding-inline-start: var(--gutter);
+	}
+
+	.products:not(.products--offset) > .product-card:nth-child(odd) {
+		border-inline-start: 0;
+		padding-inline-start: 0;
 	}
 }
 
@@ -34,6 +92,12 @@
 	.products {
 		grid-template-columns: repeat(2, 1fr);
 		gap: var(--s5) var(--s3);
+	}
+
+	/* The column gap tightens to --s3 here, so the rule's gutter has to come in with it —
+	   left at --gutter the padding would be wider than the space it is dividing. */
+	.products:not(.products--offset) > .product-card:nth-child(even) {
+		padding-inline-start: var(--s3);
 	}
 }
 
@@ -140,7 +204,7 @@
 }
 
 [data-motion='full'] .product-card__img {
-	transition: transform 240ms var(--ease-out);
+	transition: transform 240ms var(--ease-out), opacity 240ms var(--ease-out);
 }
 
 [data-motion='full'] .product-card__img--hover {
@@ -166,6 +230,20 @@
 .has-hover:hover .product-card__img--hover,
 .has-hover:focus-within .product-card__img--hover {
 	opacity: 1;
+}
+
+/*
+ * Raising the hover image is not enough to replace the one under it, and both reasons are
+ * in this file already. `multiply` composites with its backdrop instead of covering it, so
+ * a studio cutout at full opacity still shows the first image through itself. And `contain`
+ * (both branches) leaves gutters wherever the two images disagree on aspect ratio — 61% of
+ * the catalogue is square and the gallery shots are not, so the frame below stays visible
+ * around the edges. Two images at once, on exactly the subset where those two conditions
+ * land. The base has to come down.
+ */
+.has-hover:hover .product-card__img:not(.product-card__img--hover),
+.has-hover:focus-within .product-card__img:not(.product-card__img--hover) {
+	opacity: 0;
 }
 
 [data-motion='reduced'] .product-card__tint {

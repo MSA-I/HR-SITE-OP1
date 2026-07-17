@@ -15,10 +15,17 @@
 	border-block-start: var(--rule);
 }
 
+/*
+ * "מציג 1-26 מתוך 250 תוצאות" — mostly Hebrew with digits inside it, and Woo builds the
+ * string, so the two scripts cannot be split the way the section rail's can. The Hebrew
+ * is the majority and the part that was rendering wrong, so it wins: body face, no
+ * tracking. The digits give up Plex, which costs less than Hebrew in a fallback mono at
+ * 1.04px of tracking.
+ */
 .woocommerce-result-count {
-	font-family: var(--ff-mono);
-	font-size: var(--fs-mono);
-	letter-spacing: 0.08em;
+	font-family: var(--ff-body);
+	font-size: var(--fs-sm);
+	letter-spacing: normal;
 	color: var(--brown-500);
 	margin: 0;
 }

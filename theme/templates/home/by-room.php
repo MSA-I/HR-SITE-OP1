@@ -51,7 +51,7 @@ if ( count( $hrd_portals ) < 2 ) {
 <section class="section ground--cream-alt">
 	<div class="grid">
 		<div class="section__rail">
-			<span class="section__index">04 / <?php esc_html_e( 'חללים', 'hrdesign' ); ?></span>
+			<span class="section__index"><span class="section__num">04</span> / <span class="section__label"><?php esc_html_e( 'חללים', 'hrdesign' ); ?></span></span>
 		</div>
 
 		<div class="section__body">

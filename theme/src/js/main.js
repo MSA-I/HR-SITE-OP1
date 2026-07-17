@@ -6,6 +6,7 @@ import { initViewTransitions } from './modules/view-transitions.js';
 import { initMegaMenu } from './modules/mega-menu.js';
 import { initCollection } from './modules/collection.js';
 import { initTabs } from './modules/tabs.js';
+import { initCount } from './modules/count.js';
 import { initByLight } from './by-light.js';
 
 /*
@@ -22,6 +23,7 @@ initViewTransitions();
 initMegaMenu();
 initCollection();
 initTabs();
+initCount();
 initByLight();
 
 observeReveal('.reveal');

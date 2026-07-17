@@ -116,7 +116,7 @@ add_filter(
 		$args,
 		array(
 			'delimiter' => '<span class="breadcrumb__sep" aria-hidden="true"> / </span>',
-			'wrap_before' => '<nav class="breadcrumb t-mono" aria-label="' . esc_attr__( 'מיקומך באתר', 'hrdesign' ) . '">',
+			'wrap_before' => '<nav class="breadcrumb t-meta" aria-label="' . esc_attr__( 'מיקומך באתר', 'hrdesign' ) . '">',
 			'wrap_after' => '</nav>',
 		)
 	)

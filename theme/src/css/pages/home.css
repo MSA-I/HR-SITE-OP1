@@ -643,9 +643,19 @@
 	}
 }
 
+/*
+ * Display scale, not --fs-xl. These four numbers are the only hard facts on the page and
+ * they were set at 34px — the same size as a section heading, in a row of four, which is
+ * what "flat" looks like. The jump to the display ramp is the point: it is the gap
+ * tokens.css:61 deliberately leaves in the scale, and crossing it is what makes the row
+ * read as a statement rather than as a caption.
+ *
+ * Sizes only. The opacity on the unit and label is load-bearing for contrast on brown and
+ * is left where it is; going up in size only relaxes the WCAG threshold, never tightens it.
+ */
 .trust__num {
 	font-family: var(--ff-mono);
-	font-size: var(--fs-xl);
+	font-size: var(--fs-d-s);
 	line-height: 1.1;
 	display: flex;
 	align-items: baseline;
@@ -654,12 +664,12 @@
 
 .trust__unit {
 	font-family: var(--ff-body);
-	font-size: var(--fs-sm);
+	font-size: var(--fs-md);
 	opacity: 0.7;
 }
 
 .trust__label {
 	margin-block-start: var(--s2);
-	font-size: var(--fs-sm);
+	font-size: var(--fs-base);
 	opacity: 0.7;
 }

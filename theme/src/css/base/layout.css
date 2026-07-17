@@ -55,10 +55,27 @@
 	justify-content: center;
 }
 
+/*
+ * The rail is one string in two scripts — "04 / חללים" — and it was being set as if it
+ * were one. It cannot be: IBM Plex Mono ships no Hebrew (see fonts.css, the face is
+ * unicode-range latin), so --ff-mono styled the digits and silently handed the Hebrew to
+ * whatever ui-monospace resolves to — Consolas on the client's Windows, which has no
+ * Hebrew either, so it fell again. Measured in the page: "חללים" in Plex and in plain
+ * monospace come out identical to the sub-pixel, which is what "this font is doing
+ * nothing" looks like. The 0.08em rode along with it, putting 1.04px of tracking on
+ * Hebrew — five times the 0.2px ceiling probe-a11y.php:133 enforces, and only slipping
+ * through because that check exempts Plex on a premise footer.css:244 already recorded as
+ * false.
+ *
+ * So the two scripts are set separately. The number keeps the mono and the tracking,
+ * which is what they were for. The Hebrew gets the body face at --fs-sm, no tracking.
+ * Same fix already applied to .byl__eyebrow and .payment-chip; this finishes it.
+ */
 .section__index {
-	font-family: var(--ff-mono);
-	font-size: var(--fs-mono);
-	letter-spacing: 0.08em;
+	/* --fs-base, not --fs-sm. 11 -> 13 was the first attempt at "פיציים" and did not land;
+	   15 was the second and did not either. This is body size: the rail is a label the
+	   client reads at a glance from across the page, not fine print. */
+	font-size: var(--fs-base);
 	color: var(--brown-500);
 	/* Never writing-mode: vertical-rl on Hebrew — it rotates glyphs into nonsense.
 	   Rotating the whole inline-block keeps the line horizontally typeset. */
@@ -68,6 +85,21 @@
 	block-size: max-content;
 	position: sticky;
 	inset-block-start: var(--s8);
+}
+
+/* Latin digits: Plex renders these, and the tracking is doing its job here.
+   A step under the Hebrew rather than level with it — Plex's digits carry a taller
+   x-height than Assistant's Hebrew, so matching the numbers optically means not
+   matching them numerically. */
+.section__num {
+	font-family: var(--ff-mono);
+	font-size: var(--fs-sm);
+	letter-spacing: 0.08em;
+}
+
+.section__label {
+	font-family: var(--ff-body);
+	letter-spacing: normal;
 }
 
 .section__rail::after {

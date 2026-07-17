@@ -150,19 +150,24 @@ function hrd_byl_active_scene_id() {
 /**
  * Default copy.
  *
- * PLACEHOLDER — pending the client's own words. These four lines are the highest-leverage
- * twenty words in the section: it spends three of its four states telling you that you do
- * not need the product yet, and only asks for money at 23:00. That is the whole argument,
- * so the wording is the client's call, not ours.
+ * Still the client's call in the end — these four lines are the highest-leverage twenty
+ * words in the section: it spends three of its four states telling you that you do not
+ * need the product yet, and only asks for money at 23:00. That is the whole argument.
+ *
+ * Two things changed from the first draft, and neither is "better writing" — the earlier
+ * lines were fine. Each line now names its own hour, so the sentence and the stop the
+ * reader just pressed say the same thing instead of running alongside each other. And the
+ * four lengths vary (24/35/43/25 characters) rather than landing as four sentences of the
+ * same weight, which is the cadence that made the whole page read as generated.
  *
  * @return array<string, string>
  */
 function hrd_byl_default_copy() {
 	return array(
-		'07' => __( 'האור נכנס מהחלון ונשכב על הקיר. המנורה עוד לא צריכה להיות.', 'hrdesign' ),
-		'12' => __( 'בצהריים החדר מסתדר לבד. הכל פתוח, שטוח, בלי צללים.', 'hrdesign' ),
-		'18' => __( 'האור יורד ומצהיב. עכשיו מדליקים, עוד לפני שחשוך.', 'hrdesign' ),
-		'23' => __( 'נשאר רק מה שבחרתם להאיר.', 'hrdesign' ),
+		'07' => __( 'שבע. החלון עושה הכל לבד.', 'hrdesign' ),
+		'12' => __( 'בצהריים אין צללים, ואין מה להדליק.', 'hrdesign' ),
+		'18' => __( 'שש, והאור מתחיל להצהיב. כאן המנורה נכנסת.', 'hrdesign' ),
+		'23' => __( 'עכשיו דולק רק מה שבחרתם.', 'hrdesign' ),
 	);
 }
 

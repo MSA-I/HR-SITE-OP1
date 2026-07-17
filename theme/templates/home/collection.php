@@ -49,7 +49,7 @@ if ( ! in_array( $accent, array( 'natural-forms', 'warm-minimalism', 'outdoor-li
 
 <section class="section collection ground--accent collection-<?php echo esc_attr( $accent ); ?> bleed">
 	<div class="collection__rail" aria-hidden="true">
-		<span class="section__index">02 / <?php esc_html_e( 'קולקציה', 'hrdesign' ); ?></span>
+		<span class="section__index"><span class="section__num">02</span> / <span class="section__label"><?php esc_html_e( 'קולקציה', 'hrdesign' ); ?></span></span>
 	</div>
 
 	<?php // scroll-snap is PROXIMITY, not mandatory: mandatory fights the user's finger. ?>
@@ -57,7 +57,7 @@ if ( ! in_array( $accent, array( 'natural-forms', 'warm-minimalism', 'outdoor-li
 		aria-label="<?php echo esc_attr( sprintf( __( 'קולקציית %s', 'hrdesign' ), $term->name ) ); ?>">
 
 		<div class="collection__frame collection__frame--title">
-			<p class="t-mono collection__eyebrow"><?php esc_html_e( 'קולקציה במוקד', 'hrdesign' ); ?></p>
+			<p class="t-meta collection__eyebrow"><?php esc_html_e( 'קולקציה במוקד', 'hrdesign' ); ?></p>
 			<h2 class="t-display t-display--l"><?php echo esc_html( $term->name ); ?></h2>
 			<?php if ( $term->description ) : ?>
 				<p class="collection__story"><?php echo esc_html( wp_trim_words( $term->description, 24 ) ); ?></p>

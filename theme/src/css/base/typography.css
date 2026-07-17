@@ -61,6 +61,26 @@ body {
 	color: var(--brown-500);
 }
 
+/*
+ * .t-mono's Hebrew counterpart, and the reason it exists: the rule above says "never
+ * Hebrew" and four callers were doing exactly that anyway — the breadcrumb, the
+ * collection eyebrow, and both PDP figcaptions. There was no class for "small meta text
+ * that happens to be Hebrew", so .t-mono got reached for by role, and the role is the
+ * only thing the two share.
+ *
+ * Same job, same colour, same rank in the hierarchy. Different script, so: the body face
+ * (Plex has no Hebrew to give it), no tracking (probe-a11y.php:133 caps Hebrew at 0.2px),
+ * and --fs-sm rather than --fs-mono, because 13px was already raised once from 11px after
+ * the client called these פיציים and it did not land. Latin digits keep .t-mono.
+ */
+.t-meta {
+	font-family: var(--ff-body);
+	font-size: var(--fs-sm);
+	line-height: var(--lh-mono);
+	letter-spacing: normal;
+	color: var(--brown-500);
+}
+
 /* ---- Bidi isolation ------------------------------------------------------ */
 /*
  * Mandatory on every number. The shekel sign is a bidi-neutral character: unisolated,
